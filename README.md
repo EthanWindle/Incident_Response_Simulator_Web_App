@@ -1,6 +1,18 @@
 # ENGR489_Ethan
 
 
+## OverLeaf
+
+https://www.overleaf.com/project/65ea9994a9db7f82dd381cbb
+
+## Meeting logs
+
+| Date | Attendees | Description |
+| ------ | ------ | ------ |
+| 8/3/24 | Ethan & Arman | talked about the basics of the project and what it could be. |
+| 15/3/24 | Ethan & Arman | |
+| 22/3/24 | | |
+
 
 ## Getting started
 
