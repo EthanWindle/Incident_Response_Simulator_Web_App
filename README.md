@@ -10,7 +10,7 @@ https://www.overleaf.com/project/65ea9994a9db7f82dd381cbb
 | Date | Attendees | Description |
 | ------ | ------ | ------ |
 | 8/3/24 | Ethan & Arman | talked about the basics of the project and what it could be. |
-| 15/3/24 | Ethan & Arman | |
+| 15/3/24 | Ethan & Arman | Decided on my Project (an Incident Response Simuator), Talk about proposel layout, next is to find articles and related work. |
 | 22/3/24 | | |
 
 
