@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'choicePage.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(const choicePage());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class choicePage extends StatelessWidget {
+  const choicePage({super.key});
 
   // This widget is the root of your application.
   @override
@@ -41,7 +41,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _selectedScenario = "not selected";
 
-  void _selecteScenario(String str) {
+  void __selectedScenario(String str) {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -50,13 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _selectedScenario = str;
     });
-  }
-
-  void _comfirm(){
-     Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => choicePage()),
-            );
   }
 
   @override
@@ -88,13 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        /*onPressed: () => _selecteScenario("111"),
-        tooltip: 'set selection',
-        child: const Icon(Icons.add),
-      ),
-
-      comfirmButton: FloatingActionButton(*/
-        onPressed: () => _comfirm(),
+        onPressed: () => __selectedScenario("111"),
         tooltip: 'set selection',
         child: const Icon(Icons.add),
       ),
