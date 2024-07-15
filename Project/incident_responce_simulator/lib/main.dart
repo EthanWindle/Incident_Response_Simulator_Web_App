@@ -39,13 +39,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _comfirm(){
+  void _scenarioSelection(bool hosting){
+     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const choicePage()),//add Hosting when choice page is set up
+            );
+  }
+  void _joinPage(){
      Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const choicePage()),
             );
   }
-
   @override
   Widget build(BuildContext context) {
     // The Flutter framework has been optimized to make rerunning build methods
@@ -67,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             MaterialButton(
-              onPressed: () => _comfirm(),
+              onPressed: () => _scenarioSelection(false),
               color: Theme.of(context).primaryColor,
               height: 140.0,
               minWidth: 100.0,
@@ -80,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ), 
             ),
             MaterialButton(
-              onPressed: () => _comfirm(),
+              onPressed: () => _scenarioSelection(true),
               color: Theme.of(context).primaryColor,
               height: 140.0,
               minWidth: 100.0,
@@ -93,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ), 
             ),
             MaterialButton(
-              onPressed: () => _comfirm(),
+              onPressed: () => _joinPage(),
               color: Theme.of(context).primaryColor,
               height: 140.0,
               minWidth: 100.0,
