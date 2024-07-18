@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-
+import 'dart:io';
+import 'main.dart';
 
 void main() {
-  runApp(const choicePage());
+  runApp(const ScenarioSelector());
 }
 
-class choicePage extends StatelessWidget {
-  const choicePage({super.key});
-
-  // This widget is the root of your application.
+class ScenarioSelector extends StatelessWidget {
+  const ScenarioSelector({super.key});
+ 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,39 +24,42 @@ class choicePage extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Incident Response Home Page'),
+      home: const ScenarioSelectorPage(title: 'Incident Response selector Page'),
     );
   }
+
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class ScenarioSelectorPage extends StatefulWidget {
+  const ScenarioSelectorPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ScenarioSelectorPage> createState() => _ScenarioSelectorState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
   String _selectedScenario = "not selected";
 
-  void __selectedScenario(String str) {
+  void _selecteScenario(String str) async {
+    final myDir = Directory('dir');
+    var isThere = await myDir.exists();
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _selectedScenario = str;
+      _selectedScenario = isThere ? 'exists' : 'nonexistent';
     });
   }
 
+  void _comfirm(){
+     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyApp()),
+            );
+  }
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -81,7 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () => __selectedScenario("111"),
+        /*onPressed: () => _selecteScenario("111"),
+        tooltip: 'set selection',
+        child: const Icon(Icons.add),
+      ),
+
+      comfirmButton: FloatingActionButton(*/
+        onPressed: () => _comfirm(),
         tooltip: 'set selection',
         child: const Icon(Icons.add),
       ),
