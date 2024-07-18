@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'choicePage.dart';
+import 'scenarioSelectorPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _comfirm(){
      Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => choicePage()),
+              MaterialPageRoute(builder: (context) => ScenarioSelector()),
             );
   }
 
