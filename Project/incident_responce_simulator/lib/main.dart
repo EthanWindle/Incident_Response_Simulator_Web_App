@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'scenarioSelectorPage.dart';
+import 'scenario_selector_page.dart';
 
 void main() {
   runApp(const MyApp());
