@@ -81,35 +81,52 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-            title: 'List of Files',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Get List of Files with whole Path"),
-        ),
-        body: Container(
-          child: scenarios.isEmpty
-            ? CircularProgressIndicator()
-            : ListView.builder(
-                itemCount: scenarios.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: MaterialButton(
-                      onPressed: () {
-                        _selecteScenario(scenarios[index]);
-                      },
-                      color: _selectedScenario == scenarios[index] ? Colors.green : Colors.blue,
-                      textColor: Colors.white,
-                      child: Text(scenarios[index]),
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  );
-                },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: scenarios.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: scenarios.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: MaterialButton(
+                          onPressed: () {
+                            _selecteScenario(scenarios[index]);
+                          },
+                          color: _selectedScenario == scenarios[index] ? Colors.green : Colors.blue,
+                          textColor: Colors.white,
+                          child: Text(scenarios[index]),
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                _comfirm();
+              }, // Pass the method as a callback
+              child: Text('Confirm'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
               ),
+            ),
+          ],
         ),
       ),
     );
