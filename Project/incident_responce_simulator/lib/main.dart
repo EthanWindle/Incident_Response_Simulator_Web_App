@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'scenarioSelectorPage.dart';
+=======
+import 'scenario_selector_page.dart';
+>>>>>>> 6a6cfa6e7edb5cff29e4d2f95803da967fd8a6ca
 
 void main() {
   runApp(const MyApp());
