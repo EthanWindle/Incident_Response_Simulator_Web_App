@@ -7,12 +7,10 @@ import 'dart:developer';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
-void main() {
-  runApp(const ChoicePage());
-}
 
 class ChoicePage extends StatelessWidget {
-  const ChoicePage({super.key});
+  final String path;
+  ChoicePage({super.key, required this.path});
  
   @override
   Widget build(BuildContext context) {
@@ -29,22 +27,23 @@ class ChoicePage extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const ChoicePagePage(title: 'Incident Response selector Page'),
+      home: Choice_Page(title: 'Incident Response selector Page', path: path,),
     );
   }
 
 }
 
-class ChoicePagePage extends StatefulWidget {
-  const ChoicePagePage({super.key, required this.title});
+class Choice_Page extends StatefulWidget {
+  Choice_Page({super.key, required this.title, required this.path});
 
   final String title;
+  final String path;
 
   @override
-  State<ChoicePagePage> createState() => _ChoicePageState();
+  State<Choice_Page> createState() => _ChoicePageState();
 }
 
-class _ChoicePageState extends State<ChoicePagePage> {
+class _ChoicePageState extends State<Choice_Page> {
   List options = [];
   String _selectedOption = "not selected";
   String _situation = "";
@@ -64,7 +63,7 @@ class _ChoicePageState extends State<ChoicePagePage> {
   void _comfirm(){
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyApp()),
+      MaterialPageRoute(builder: (context) => ChoicePage(path: "${widget.path}/$_selectedOption")),
     );
   }
 
@@ -73,9 +72,7 @@ class _ChoicePageState extends State<ChoicePagePage> {
     final Map<String, dynamic> data = json.decode(response);
     setState(() {
       _situation = data['Situation'];
-      options = data['Options'].map<String>((option) {
-        return option.values.first; // Extract the value from the option map
-      }).toList();
+      options = data['Options'];
     });
   }
 
@@ -100,7 +97,7 @@ class _ChoicePageState extends State<ChoicePagePage> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: MaterialButton(
                           onPressed: () {
-                            _selecteOption(options[index]);
+                            _selecteOption("Option$index");
                           },
                           color: _selectedOption == options[index] ? Colors.green : Colors.blue,
                           textColor: Colors.white,
