@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
-import 'package:path_provider/path_provider.dart';
 import 'main.dart';
+import 'choice_page.dart';
 import 'dart:developer';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
@@ -65,7 +65,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
   void _comfirm(){
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyApp()),
+      MaterialPageRoute(builder: (context) => ChoicePage(path: "Scenarios/$_selectedScenario")),
     );
   }
 
