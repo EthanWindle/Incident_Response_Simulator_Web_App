@@ -1,0 +1,9 @@
+{
+    "Situation" : "Starting incident explainations.",
+    "Options" : [
+        {"Option1" : "blah blah balh"},
+        {"Option2" : "blah blah blah"},
+        {"Option3" : "blah blah balh"},
+        {"Option4" : "blah blah blah"}
+    ]
+}
