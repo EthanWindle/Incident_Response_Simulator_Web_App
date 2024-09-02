@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
+import 'outcome_page.dart';
 
 class ChoicePage extends StatelessWidget {
   final String path;
@@ -77,9 +78,7 @@ class _ChoicePageState extends State<Choice_Page> {
           context,
           MaterialPageRoute(
             builder: (context) => _isEndChoice
-                ? ChoicePage(
-                    path:
-                        "${widget.path}/$_selectedOption") //OutcomePage(path: "${widget.path}/$_selectedOption")
+                ? OutcomePage(path: "${widget.path}/$_selectedOption")
                 : ChoicePage(path: "${widget.path}/$_selectedOption"),
           ));
     }
