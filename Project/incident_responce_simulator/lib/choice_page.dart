@@ -1,41 +1,37 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:io' as io;
-import 'package:path_provider/path_provider.dart';
-import 'main.dart';
-import 'scenario_selector_page.dart';
-import 'dart:developer';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
-
 class ChoicePage extends StatelessWidget {
   final String path;
-  ChoicePage({super.key, required this.path});
- 
+  const ChoicePage({super.key, required this.path});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Incident Response',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 21, 151), 
-        primary: Color.fromARGB(255, 1, 21, 151),
-        surface: Colors.white),
-        textTheme: TextTheme(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 1, 21, 151),
+            surface: Colors.white),
+        textTheme: const TextTheme(
           displayLarge: TextStyle(
-          color: Colors.white,
+            color: Colors.white,
           ),
         ),
         useMaterial3: true,
       ),
-      home: Choice_Page(title: 'Incident Response selector Page', path: path,),
+      home: Choice_Page(
+        title: 'Incident Response selector Page',
+        path: path,
+      ),
     );
   }
-
 }
 
 class Choice_Page extends StatefulWidget {
-  Choice_Page({super.key, required this.title, required this.path});
+  const Choice_Page({super.key, required this.title, required this.path});
 
   final String title;
   final String path;
@@ -61,19 +57,30 @@ class _ChoicePageState extends State<Choice_Page> {
     });
   }
 
-  void _comfirm(){
+  void _comfirm() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ChoicePage(path: "${widget.path}/$_selectedOption")),
+      MaterialPageRoute(
+          builder: (context) =>
+              ChoicePage(path: "${widget.path}/$_selectedOption")),
     );
   }
 
   void _optionsList() async {
-    final String response = await rootBundle.loadString('currentSituation.json');
+    final String response =
+        await rootBundle.loadString('${widget.path}/currentSituation.json');
     final Map<String, dynamic> data = json.decode(response);
     setState(() {
       _situation = data['Situation'];
-      options = data['Options'];
+
+      for (var button in data['Options']) {
+        // `button` is now a Map<String, String>
+        int index = data['Options'].indexOf(button) + 1;
+        String optionKey = "Option$index";
+
+        // Add the option to the list
+        options.add(button[optionKey]);
+      }
     });
   }
 
@@ -86,44 +93,49 @@ class _ChoicePageState extends State<Choice_Page> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: Row(
           children: [
             Expanded(
-              child: options.isEmpty
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: options.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _selecteOption("Option$index");
-                          },
-                          color: _selectedOption == options[index] ? Colors.green : Colors.blue,
-                          textColor: Colors.white,
-                          child: Text(options[index]),
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+              flex: 2,
+              child: Text(_situation),
             ),
-            SizedBox(height: 16.0),
+            Expanded(
+              child: options.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: MaterialButton(
+                            onPressed: () {
+                              _selecteOption("Option$index");
+                            },
+                            color: _selectedOption == options[index]
+                                ? Colors.green
+                                : Colors.blue,
+                            textColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(options[index]),
+                          ),
+                        );
+                      },
+                    ),
+            ),
             ElevatedButton(
               onPressed: () {
                 _comfirm();
-              }, // Pass the method as a callback
-              child: Text('Confirm'),
+              },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-              ),
+              ), // Pass the method as a callback
+              child: const Text('Confirm'),
             ),
           ],
         ),

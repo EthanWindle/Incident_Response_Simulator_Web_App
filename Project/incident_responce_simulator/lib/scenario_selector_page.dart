@@ -1,9 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:io' as io;
-import 'main.dart';
 import 'choice_page.dart';
-import 'dart:developer';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 
@@ -13,26 +9,27 @@ void main() {
 
 class ScenarioSelector extends StatelessWidget {
   const ScenarioSelector({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Incident Response',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 21, 151), 
-        primary: Color.fromARGB(255, 1, 21, 151),
-        surface: Colors.white),
-        textTheme: TextTheme(
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 1, 21, 151),
+            surface: Colors.white),
+        textTheme: const TextTheme(
           displayLarge: TextStyle(
-          color: Colors.white,
+            color: Colors.white,
           ),
         ),
         useMaterial3: true,
       ),
-      home: const ScenarioSelectorPage(title: 'Incident Response selector Page'),
+      home:
+          const ScenarioSelectorPage(title: 'Incident Response selector Page'),
     );
   }
-
 }
 
 class ScenarioSelectorPage extends StatefulWidget {
@@ -47,7 +44,7 @@ class ScenarioSelectorPage extends StatefulWidget {
 class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
   List scenarios = [];
   String _selectedScenario = "not selected";
-  
+
   @override
   void initState() {
     super.initState();
@@ -62,10 +59,12 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     print(_selectedScenario);
   }
 
-  void _comfirm(){
+  void _comfirm() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ChoicePage(path: "Scenarios/$_selectedScenario")),
+      MaterialPageRoute(
+          builder: (context) =>
+              ChoicePage(path: "Scenarios/$_selectedScenario")),
     );
   }
 
@@ -75,7 +74,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     setState(() {
       scenarios = data.cast<String>();
     });
-    print("print all scenarios $scenarios[0]");
+    print("print all scenarios $scenarios");
   }
 
   // This widget is the root of your application.
@@ -91,40 +90,42 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
           children: [
             Expanded(
               child: scenarios.isEmpty
-                ? Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: scenarios.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _selecteScenario(scenarios[index]);
-                          },
-                          color: _selectedScenario == scenarios[index] ? Colors.green : Colors.blue,
-                          textColor: Colors.white,
-                          child: Text(scenarios[index]),
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: scenarios.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: MaterialButton(
+                            onPressed: () {
+                              _selecteScenario(scenarios[index]);
+                            },
+                            color: _selectedScenario == scenarios[index]
+                                ? Colors.green
+                                : Colors.blue,
+                            textColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(scenarios[index]),
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 _comfirm();
-              }, // Pass the method as a callback
-              child: Text('Confirm'),
+              },
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-              ),
+              ), // Pass the method as a callback
+              child: const Text('Confirm'),
             ),
           ],
         ),
