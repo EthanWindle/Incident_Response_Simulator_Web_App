@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'scenario_selector_page.dart';
+import 'choicePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,26 +39,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _selectedScenario = "not selected";
-
-  void _selecteScenario(String str) {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _selectedScenario = str;
-    });
-  }
-
-  void _comfirm(){
+  void _scenarioSelection(bool hosting){
      Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ScenarioSelector()),
+              MaterialPageRoute(builder: (context) => const choicePage()),//add Hosting when choice page is set up
             );
   }
-
+  void _joinPage(){
+     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const choicePage()),
+            );
+  }
   @override
   Widget build(BuildContext context) {
     // The Flutter framework has been optimized to make rerunning build methods
@@ -79,24 +71,47 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              _selectedScenario,
-              style: Theme.of(context).textTheme.headlineMedium,
+            MaterialButton(
+              onPressed: () => _scenarioSelection(false),
+              color: Theme.of(context).primaryColor,
+              height: 140.0,
+              minWidth: 100.0,
+              child: const Text(
+                'Run by Yourself',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ), 
             ),
+            MaterialButton(
+              onPressed: () => _scenarioSelection(true),
+              color: Theme.of(context).primaryColor,
+              height: 140.0,
+              minWidth: 100.0,
+              child: const Text(
+                'Host',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ), 
+            ),
+            MaterialButton(
+              onPressed: () => _joinPage(),
+              color: Theme.of(context).primaryColor,
+              height: 140.0,
+              minWidth: 100.0,
+              child: const Text(
+                'Join',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ), 
+            )
           ],
         ),
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        /*onPressed: () => _selecteScenario("111"),
-        tooltip: 'set selection',
-        child: const Icon(Icons.add),
-      ),
-
-      comfirmButton: FloatingActionButton(*/
-        onPressed: () => _comfirm(),
-        tooltip: 'set selection',
-        child: const Icon(Icons.add),
       ),
     );
   }
