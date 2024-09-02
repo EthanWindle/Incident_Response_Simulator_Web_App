@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
-import 'outcome_page.dart';
 
-class ChoicePage extends StatelessWidget {
+class OutcomePage extends StatelessWidget {
   final String path;
-  const ChoicePage({super.key, required this.path});
+  const OutcomePage({super.key, required this.path});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class ChoicePage extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Choice_Page(
+      home: Outcome_Page(
         title: 'Incident Response selector Page',
         path: path,
       ),
@@ -31,21 +30,21 @@ class ChoicePage extends StatelessWidget {
   }
 }
 
-class Choice_Page extends StatefulWidget {
-  const Choice_Page({super.key, required this.title, required this.path});
+class Outcome_Page extends StatefulWidget {
+  const Outcome_Page({super.key, required this.title, required this.path});
 
   final String title;
   final String path;
 
   @override
-  State<Choice_Page> createState() => _ChoicePageState();
+  State<Outcome_Page> createState() => _OutcomePageState();
 }
 
-class _ChoicePageState extends State<Choice_Page> {
+class _OutcomePageState extends State<Outcome_Page> {
   List options = [];
   List optionContinues = [];
   String _selectedOption = "not selected";
-  bool _isEndChoice = false;
+  bool _isEndOutcome = false;
   String _situation = "";
 
   @override
@@ -57,7 +56,7 @@ class _ChoicePageState extends State<Choice_Page> {
   void _selecteOption(String str, bool end) async {
     setState(() {
       _selectedOption = str;
-      _isEndChoice = end;
+      _isEndOutcome = end;
     });
   }
 
@@ -77,9 +76,11 @@ class _ChoicePageState extends State<Choice_Page> {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => _isEndChoice
-                ? OutcomePage(path: "${widget.path}/$_selectedOption")
-                : ChoicePage(path: "${widget.path}/$_selectedOption"),
+            builder: (context) => _isEndOutcome
+                ? OutcomePage(
+                    path:
+                        "${widget.path}/$_selectedOption") //OutcomePage(path: "${widget.path}/$_selectedOption")
+                : OutcomePage(path: "${widget.path}/$_selectedOption"),
           ));
     }
   }
