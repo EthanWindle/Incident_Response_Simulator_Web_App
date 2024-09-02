@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Incident Response',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 1, 21, 151), 
-        primary: Color.fromARGB(255, 1, 21, 151),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 21, 151), 
+        primary: const Color.fromARGB(255, 1, 21, 151),
         surface: Colors.white),
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           displayLarge: TextStyle(
           color: Colors.white,
           ),
@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _comfirm(){
      Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ScenarioSelector()),
+              MaterialPageRoute(builder: (context) => const ScenarioSelector()),
             );
   }
 
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title,
-        style: TextStyle(color: Colors.white)),
+        style: const TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: Column(
