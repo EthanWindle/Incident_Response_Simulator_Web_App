@@ -41,62 +41,30 @@ class Outcome_Page extends StatefulWidget {
 }
 
 class _OutcomePageState extends State<Outcome_Page> {
-  List options = [];
-  List optionContinues = [];
-  String _selectedOption = "not selected";
-  bool _isEndOutcome = false;
-  String _situation = "";
+  List _notesList = [];
+  String _score = "";
+  String _outcome = "";
 
   @override
   void initState() {
     super.initState();
-    _optionsList();
+    _generateNotesList();
   }
 
-  void _selecteOption(String str, bool end) async {
-    setState(() {
-      _selectedOption = str;
-      _isEndOutcome = end;
-    });
-  }
+  void _comfirm() {}
 
-  void _comfirm() {
-    if (_selectedOption == "not selected") {
-      (BuildContext context) => AlertDialog(
-            title: const Text('AlertDialog Title'),
-            content: const Text('AlertDialog description'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
-              ),
-            ],
-          );
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => _isEndOutcome
-                ? OutcomePage(
-                    path:
-                        "${widget.path}/$_selectedOption") //OutcomePage(path: "${widget.path}/$_selectedOption")
-                : OutcomePage(path: "${widget.path}/$_selectedOption"),
-          ));
-    }
-  }
-
-  void _optionsList() async {
+  void _generateNotesList() async {
     final String response =
-        await rootBundle.loadString('${widget.path}/currentSituation.json');
+        await rootBundle.loadString('${widget.path}/outcome.json');
     final Map<String, dynamic> data = json.decode(response);
     setState(() {
-      _situation = data['Situation'];
+      _score = data["Score"];
+      _outcome = data['Outcome'];
 
-      for (var button in data['Options']) {
+      for (var note in data['Notes']) {
         // `button` is now a Map<String, String>
         // Add the option to the list
-        options.add(button["Option"]);
-        optionContinues.add(button["end"] == "true");
+        _notesList.add(note["Note"]);
       }
     });
   }
@@ -114,46 +82,26 @@ class _OutcomePageState extends State<Outcome_Page> {
           children: [
             Expanded(
               flex: 2,
-              child: Text(_situation),
+              child: Text(_score),
             ),
             Expanded(
-              child: options.isEmpty
+              flex: 2,
+              child: Text(_outcome),
+            ),
+            Expanded(
+              child: _notesList.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
-                      itemCount: options.length,
+                      itemCount: _notesList.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: MaterialButton(
-                            onPressed: () {
-                              _selecteOption(
-                                  "Option${index + 1}", optionContinues[index]);
-                            },
-                            color: _selectedOption == "Option${index + 1}"
-                                ? Colors.green
-                                : Colors.blue,
-                            textColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(options[index]),
+                          child: Text(
+                            _notesList[index],
                           ),
                         );
                       },
                     ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _comfirm();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ), // Pass the method as a callback
-              child: const Text('Confirm'),
             ),
           ],
         ),
