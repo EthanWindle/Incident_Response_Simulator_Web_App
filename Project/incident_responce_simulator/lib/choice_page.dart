@@ -42,7 +42,9 @@ class Choice_Page extends StatefulWidget {
 
 class _ChoicePageState extends State<Choice_Page> {
   List options = [];
+  List optionContinues = [];
   String _selectedOption = "not selected";
+  bool _isEndChoice = false;
   String _situation = "";
 
   @override
@@ -51,19 +53,36 @@ class _ChoicePageState extends State<Choice_Page> {
     _optionsList();
   }
 
-  void _selecteOption(String str) async {
+  void _selecteOption(String str, bool end) async {
     setState(() {
       _selectedOption = str;
+      _isEndChoice = end;
     });
   }
 
   void _comfirm() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              ChoicePage(path: "${widget.path}/$_selectedOption")),
-    );
+    if (_selectedOption == "not selected") {
+      (BuildContext context) => AlertDialog(
+            title: const Text('AlertDialog Title'),
+            content: const Text('AlertDialog description'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => _isEndChoice
+                ? ChoicePage(
+                    path:
+                        "${widget.path}/$_selectedOption") //OutcomePage(path: "${widget.path}/$_selectedOption")
+                : ChoicePage(path: "${widget.path}/$_selectedOption"),
+          ));
+    }
   }
 
   void _optionsList() async {
@@ -75,11 +94,9 @@ class _ChoicePageState extends State<Choice_Page> {
 
       for (var button in data['Options']) {
         // `button` is now a Map<String, String>
-        int index = data['Options'].indexOf(button) + 1;
-        String optionKey = "Option$index";
-
         // Add the option to the list
-        options.add(button[optionKey]);
+        options.add(button["Option"]);
+        optionContinues.add(button["end"] == "true");
       }
     });
   }
@@ -109,9 +126,10 @@ class _ChoicePageState extends State<Choice_Page> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: MaterialButton(
                             onPressed: () {
-                              _selecteOption("Option$index");
+                              _selecteOption(
+                                  "Option${index + 1}", optionContinues[index]);
                             },
-                            color: _selectedOption == options[index]
+                            color: _selectedOption == "Option${index + 1}"
                                 ? Colors.green
                                 : Colors.blue,
                             textColor: Colors.white,
