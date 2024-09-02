@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'choicePage.dart';
+import 'choice_page.dart';
+import 'scenario_selector_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,12 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Incident Response',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 21, 151), 
-        primary: const Color.fromARGB(255, 1, 21, 151),
-        surface: Colors.white),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 1, 21, 151),
+            surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
-          color: Colors.white,
+            color: Colors.white,
           ),
         ),
         useMaterial3: true,
@@ -39,18 +41,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _scenarioSelection(bool hosting){
-     Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const choicePage()),//add Hosting when choice page is set up
-            );
+  void _scenarioSelection(bool hosting) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              const ScenarioSelector()), //add Hosting when choice page is set up
+    );
   }
-  void _joinPage(){
-     Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const choicePage()),
-            );
+
+  void _joinPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ScenarioSelector()),
+    );
   }
+
   @override
   Widget build(BuildContext context) {
     // The Flutter framework has been optimized to make rerunning build methods
@@ -61,8 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title,
-        style: const TextStyle(color: Colors.white)),
+        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
       ),
       body: Center(
         child: Column(
@@ -82,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 20.0,
                   color: Colors.white,
                 ),
-              ), 
+              ),
             ),
             MaterialButton(
               onPressed: () => _scenarioSelection(true),
@@ -95,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 20.0,
                   color: Colors.white,
                 ),
-              ), 
+              ),
             ),
             MaterialButton(
               onPressed: () => _joinPage(),
@@ -108,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 20.0,
                   color: Colors.white,
                 ),
-              ), 
+              ),
             )
           ],
         ),
