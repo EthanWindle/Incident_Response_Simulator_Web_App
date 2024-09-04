@@ -1,0 +1,1 @@
+{"hosting":{"source":".","ignore":["firebase.json","**/.*","**/node_modules/**"],"frameworksBackend":{"region":"europe-west1"}},"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"incident-response-simulator","configurations":{"web":"1:676460140144:web:64492bffc5cfcc9c8446b5"}}}}}}

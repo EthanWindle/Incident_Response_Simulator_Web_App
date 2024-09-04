@@ -41,7 +41,7 @@ class Outcome_Page extends StatefulWidget {
 }
 
 class _OutcomePageState extends State<Outcome_Page> {
-  List _notesList = [];
+  final List _notesList = [];
   String _score = "";
   String _outcome = "";
 
