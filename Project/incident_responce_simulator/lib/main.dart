@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'choice_page.dart';
+import 'host_page.dart';
 import 'scenario_selector_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -44,9 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _scenarioSelection(bool hosting) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              const ScenarioSelector()), //add Hosting when choice page is set up
+      MaterialPageRoute(builder: (context) => const ScenarioSelector()),
+    );
+  }
+
+  void _hostPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HostPage()),
     );
   }
 
@@ -90,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             MaterialButton(
-              onPressed: () => _scenarioSelection(true),
+              onPressed: () => _hostPage(),
               color: Theme.of(context).primaryColor,
               height: 140.0,
               minWidth: 100.0,
