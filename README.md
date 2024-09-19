@@ -1,16 +1,16 @@
 # ENGR489_Ethan
 
 
-## OverLeaf
-# Prelimery Report
+# OverLeaf
+## Prelimery Report
 https://www.overleaf.com/project/65ea9994a9db7f82dd381cbb
-# Final Report
+## Final Report
 https://www.overleaf.com/project/66df65e20c25309cc94241a1
 
-## Firebase Web App
+# Firebase Web App
 https://incident-response-simulator.web.app/
 
-## Meeting logs
+# Meeting logs
 
 | Date | Attendees | Description |
 | ------ | ------ | ------ |
@@ -21,7 +21,7 @@ https://incident-response-simulator.web.app/
 | Mid Trimester 1 Break (03/04/24 - 15/04/24) |
 | 19/4/24 |	Arman and Ethan | need to work on background resource. |
 | 26/4/24 |	Arman and Ethan | |
-| 3/5/24 | Did not end up happening |
+| 3/5/24 | Did not end up happening ||
 | 10/5/24 | Arman and Ethan | |
 | 24/5/24 |	Arman and Ethan | went over preliminary report |
 | 30/5/24 |	Arman and Ethan | Received final feed back for preliminary report | 
@@ -32,9 +32,9 @@ https://incident-response-simulator.web.app/
 | 1/8/24 | Arman and Ethan | |
 | 8/8/24 | Arman and Ethan | |
 | 15/8/24 | Arman and Ethan | |
-| Mid Trimester 2 Break (19/08/24 - 02/09/24) |
-| 05/09/24 | Did not end up happening |
-| 12/09/24 | Did not end up happening |
+| Mid Trimester 2 Break (19/08/24 - 02/09/24) |||
+| 05/09/24 | Did not end up happening ||
+| 12/09/24 | Did not end up happening ||
 | 19/09/24 | Arman and Ethan | |
 | 26/09/24 | Arman and Ethan | |
 | 03/10/24 | Arman and Ethan | |
