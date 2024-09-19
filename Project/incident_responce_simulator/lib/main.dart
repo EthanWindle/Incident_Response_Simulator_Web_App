@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'host_page.dart';
 import 'scenario_selector_page.dart';
+import 'join_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -64,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _joinPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ScenarioSelector()),
+      MaterialPageRoute(builder: (context) => const JoinPage()),
     );
   }
 
