@@ -11,34 +11,128 @@ https://www.overleaf.com/project/66df65e20c25309cc94241a1
 https://incident-response-simulator.web.app/
 
 # Meeting logs
-
-| Date | Attendees | Description |
-| ------ | :------: | ------: |
-| 8/3/24 | Ethan & Arman | talked about the basics of the project and what it could be. |
-| 15/3/24 | Ethan & Arman | Decided on my Project (an Incident Response Simuator), Talk about proposel layout, next is to find articles and related work. |
-| 22/3/24 | | |	
-| 29/3/24 | Good Friday No Meeting |
-| Mid Trimester 1 Break (03/04/24 - 15/04/24) |
-| 19/4/24 |	Arman and Ethan | need to work on background resource. |
-| 26/4/24 |	Arman and Ethan | |
-| 3/5/24 | Did not end up happening ||
-| 10/5/24 | Arman and Ethan | |
-| 24/5/24 |	Arman and Ethan | went over preliminary report |
-| 30/5/24 |	Arman and Ethan | Received final feed back for preliminary report | 
-| Mid Year Break (and study/exam period) (31/05/24 - 08/07/24) |
-| 11/7/24 | Arman and Ethan | |
-| 18/7/24 | Arman and Ethan | |
-| 25/7/24 | Arman and Ethan | |
-| 1/8/24 | Arman and Ethan | |
-| 8/8/24 | Arman and Ethan | |
-| 15/8/24 | Arman and Ethan | |
-| Mid Trimester 2 Break (19/08/24 - 02/09/24) |||
-| 05/09/24 | Did not end up happening ||
-| 12/09/24 | Did not end up happening ||
-| 19/09/24 | Arman and Ethan | |
-| 26/09/24 | Arman and Ethan | |
-| 03/10/24 | Arman and Ethan | |
-| 10/10/24 | Arman and Ethan | |
+`<table>
+  <tr>
+    <th>Date</th>
+    <th>Attendees</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td> 8/3/24 </td>
+    <td> Ethan & Arman </td>
+    <td> talked about the basics of the project and what it could be. </td>
+  </tr>
+  <tr>
+    <td> 15/3/24 </td>
+    <td> Ethan & Arman </td>
+    <td> Decided on my Project (an Incident Response Simuator), Talk about proposel layout, next is to find articles and related work. </td>
+  </tr>
+  <tr>
+    <td> 22/3/24 </td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> 29/3/24 </td>
+    <td colspan="2"> Good Friday No Meeting </td>
+  </tr>
+  <tr>
+    <td colspan="3"> Mid Trimester 1 Break (03/04/24 - 15/04/24) </td>
+  </tr>
+  <tr>
+    <td> 19/4/24 </td>
+    <td> Arman and Ethan </td>
+    <td> Need to work on background resource. </td>
+  </tr>
+  <tr>
+    <td> 26/4/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> 3/5/24 </td>
+    <td colspan="2"> Did not end up happening </td>
+  </tr>
+  <tr>
+    <td> 10/5/24 </td>
+    <td> Arman and Ethan </td>
+    <td>
+    </td>
+  </tr>
+  <tr>
+    <td> 24/5/24 </td>
+    <td>	Arman and Ethan </td>
+    <td> went over preliminary report </td>
+  </tr>
+  <tr>
+    <td> 30/5/24 </td>
+    <td>	Arman and Ethan </td>
+    <td> Received final feed back for preliminary report </td>
+  </tr>
+  <tr>
+    <td colspan="3"> Mid Year Break (and study/exam period) (31/05/24 - 08/07/24) </td>
+  </tr>
+  <tr>
+    <td> 11/7/24 </td>
+    <td> Arman and Ethan </td>
+    <td>    </td>
+  </tr>
+  <tr>
+    <td> 18/7/24 </td>
+    <td> Arman and Ethan </td>
+    <td>    </td>
+  </tr>
+  <tr>
+    <td> 25/7/24 </td>
+    <td> Arman and Ethan </td>
+    <td>    </td>
+  </tr>
+  <tr>
+    <td> 1/8/24 </td>
+    <td> Arman and Ethan </td>
+    <td>    </td>
+  </tr>
+  <tr>
+    <td> 8/8/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> 15/8/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td colspan="3"> Mid Trimester 2 Break (19/08/24 - 02/09/24) </td>
+  </tr>
+  <tr>
+    <td> 05/09/24 </td>
+    <td colspan="2"> Did not end up happening </td>
+  </tr>
+  <tr>
+    <td> 12/09/24 </td>
+    <td colspan="2"> Did not end up happening </td>
+  </tr>
+  <tr>
+    <td> 19/09/24 </td>
+    <td colspan="2"> Did not end up happening </td>
+  </tr>
+  <tr>
+    <td> 26/09/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> 03/10/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> 10/10/24 </td>
+    <td> Arman and Ethan </td>
+    <td></td>
+  </tr>
+</table>`
 
 
 ## Getting started
