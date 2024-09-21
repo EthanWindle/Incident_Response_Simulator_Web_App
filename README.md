@@ -13,7 +13,7 @@ https://incident-response-simulator.web.app/
 # Meeting logs
 
 | Date | Attendees | Description |
-| ------ | ------ | ------ |
+| ------ | :------: | ------: |
 | 8/3/24 | Ethan & Arman | talked about the basics of the project and what it could be. |
 | 15/3/24 | Ethan & Arman | Decided on my Project (an Incident Response Simuator), Talk about proposel layout, next is to find articles and related work. |
 | 22/3/24 | | |	
