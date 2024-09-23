@@ -24,6 +24,16 @@ class _JoinPageState extends State<JoinPage> {
   final TextEditingController _controller = TextEditingController();
 
   Stream<List<Room>> getRoomsStream() {
+    FirebaseFirestore.instance
+        .collection('rooms')
+        .snapshots()
+        .listen((snapshot) {
+      snapshot.docChanges.forEach((change) {
+        if (change.type == DocumentChangeType.added) {
+          print('New room added: ${change.doc.data()}');
+        }
+      });
+    });
     return FirebaseFirestore.instance
         .collection('rooms')
         .snapshots()
@@ -37,9 +47,6 @@ class _JoinPageState extends State<JoinPage> {
   Future<void> _submit() async {
     CollectionReference rooms = FirebaseFirestore.instance.collection('rooms');
     String roomId = rooms.doc().id;
-
-    Room room = Room(id: roomId, name: _roomCode, password: _password);
-    await rooms.doc(roomId).set(room.toMap());
 
     /*Navigator.push(
       context,
