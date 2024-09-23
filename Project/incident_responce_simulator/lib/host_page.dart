@@ -15,8 +15,6 @@ class _HostPageState extends State<HostPage> {
   final _formKey = GlobalKey<FormState>();
   String _roomCode = '';
   String _password = '';
-
-  List<String> scenarios = [];
   String _selectedScenario = "not selected";
 
   Future<void> _submit() async {
@@ -24,7 +22,8 @@ class _HostPageState extends State<HostPage> {
     String roomId = rooms.doc().id;
 
     Room room = Room(id: roomId, name: _roomCode, password: _password);
-    await rooms.doc(roomId).set(room.toMap());
+    await rooms.add(room.toMap());
+    print(room);
 
     /*Navigator.push(
       context,
@@ -34,11 +33,13 @@ class _HostPageState extends State<HostPage> {
     );*/
   }
 
-  void _scenariosList() async {
-    final String response = await rootBundle.loadString('ScenariorsList.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      scenarios = data.cast<String>();
+  Stream<List<String>> scenariosStream() {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection('Scenarios');
+    return scenariosCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.id; // Assuming you want to return the document ID
+      }).toList();
     });
   }
 
@@ -51,7 +52,6 @@ class _HostPageState extends State<HostPage> {
   @override
   void initState() {
     super.initState();
-    _scenariosList();
   }
 
   @override
@@ -67,28 +67,45 @@ class _HostPageState extends State<HostPage> {
           children: [
             Expanded(
               flex: 2,
-              child: scenarios.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: scenarios.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: MaterialButton(
-                            onPressed: () {
-                              _selecteScenario(scenarios[index]);
-                            },
-                            color: _selectedScenario == scenarios[index]
-                                ? Colors.green
-                                : Colors.blue,
-                            textColor: Colors.white,
-                            child: Text(scenarios[index]),
-                          ),
-                        );
-                      },
-                    ),
+              child: StreamBuilder<List<String>>(
+                stream:
+                    scenariosStream(), // Stream fetching scenarios from Firestore
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No scenarios available.'));
+                  }
+
+                  // Scenarios list from Firestore
+                  List<String> scenarios = snapshot.data!;
+
+                  return ListView.builder(
+                    itemCount: scenarios.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: MaterialButton(
+                          onPressed: () {
+                            _selecteScenario(scenarios[index]);
+                          },
+                          color: _selectedScenario == scenarios[index]
+                              ? Colors.green
+                              : Colors.blue,
+                          textColor: Colors.white,
+                          child: Text(scenarios[index]),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-            const SizedBox(width: 16.0), // Fixed the width since it's in a Row.
+            const SizedBox(width: 16.0),
             Expanded(
               flex: 2,
               child: Form(
