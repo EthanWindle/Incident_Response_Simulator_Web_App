@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'choice_page.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(const ScenarioSelector());
@@ -48,7 +49,6 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
   @override
   void initState() {
     super.initState();
-    _scenariosList();
   }
 
   void _selecteScenario(String str) async {
@@ -68,13 +68,14 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     );
   }
 
-  void _scenariosList() async {
-    final String response = await rootBundle.loadString('ScenariorsList.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      scenarios = data.cast<String>();
+  Stream<List<String>> scenariosStream() {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection('Scenarios');
+    return scenariosCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.id; // Assuming you want to return the document ID
+      }).toList();
     });
-    print("print all scenarios $scenarios");
   }
 
   // This widget is the root of your application.
@@ -89,30 +90,43 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
         child: Column(
           children: [
             Expanded(
-              child: scenarios.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: scenarios.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: MaterialButton(
-                            onPressed: () {
-                              _selecteScenario(scenarios[index]);
-                            },
-                            color: _selectedScenario == scenarios[index]
-                                ? Colors.green
-                                : Colors.blue,
-                            textColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(scenarios[index]),
-                          ),
-                        );
-                      },
-                    ),
+              child: StreamBuilder<List<String>>(
+                stream:
+                    scenariosStream(), // Stream fetching scenarios from Firestore
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No scenarios available.'));
+                  }
+
+                  // Scenarios list from Firestore
+                  List<String> scenarios = snapshot.data!;
+
+                  return ListView.builder(
+                    itemCount: scenarios.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: MaterialButton(
+                          onPressed: () {
+                            _selecteScenario(scenarios[index]);
+                          },
+                          color: _selectedScenario == scenarios[index]
+                              ? Colors.green
+                              : Colors.blue,
+                          textColor: Colors.white,
+                          child: Text(scenarios[index]),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
