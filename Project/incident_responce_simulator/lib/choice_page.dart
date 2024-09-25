@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'outcome_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChoicePage extends StatelessWidget {
   final String path;
@@ -51,7 +52,8 @@ class _ChoicePageState extends State<Choice_Page> {
   @override
   void initState() {
     super.initState();
-    _optionsList();
+    _setSituation();
+    _setOptions();
   }
 
   void _selecteOption(String str, bool end) async {
@@ -78,24 +80,34 @@ class _ChoicePageState extends State<Choice_Page> {
           context,
           MaterialPageRoute(
             builder: (context) => _isEndChoice
-                ? OutcomePage(path: "${widget.path}/$_selectedOption")
-                : ChoicePage(path: "${widget.path}/$_selectedOption"),
+                ? OutcomePage(path: "${widget.path}/$_selectedOption/Next")
+                : ChoicePage(path: "${widget.path}/$_selectedOption/Next"),
           ));
     }
   }
 
-  void _optionsList() async {
-    final String response =
-        await rootBundle.loadString('${widget.path}/currentSituation.json');
-    final Map<String, dynamic> data = json.decode(response);
+  void _setSituation() async {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection(widget.path);
+    DocumentSnapshot doc = await scenariosCollection.doc("Situation").get();
+    final data = doc.data() as Map<String, dynamic>;
     setState(() {
-      _situation = data['Situation'];
+      _situation = data["Text"];
+    });
+  }
 
-      for (var button in data['Options']) {
-        // `button` is now a Map<String, String>
-        // Add the option to the list
-        options.add(button["Option"]);
-        optionContinues.add(button["end"] == "true");
+  void _setOptions() async {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection(widget.path);
+
+    scenariosCollection
+        .where('Option', isNotEqualTo: 'Situation')
+        .get()
+        .then((querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        options.add(data['Option']);
+        optionContinues.add(data['End']);
       }
     });
   }
@@ -113,34 +125,34 @@ class _ChoicePageState extends State<Choice_Page> {
           children: [
             Expanded(
               flex: 2,
-              child: Text(_situation),
+              child: _situation.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : Text(_situation),
             ),
             Expanded(
-              child: options.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: options.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: MaterialButton(
-                            onPressed: () {
-                              _selecteOption(
-                                  "Option${index + 1}", optionContinues[index]);
-                            },
-                            color: _selectedOption == "Option${index + 1}"
-                                ? Colors.green
-                                : Colors.blue,
-                            textColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(options[index]),
-                          ),
-                        );
+              child: ListView.builder(
+                itemCount: options.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: MaterialButton(
+                      onPressed: () {
+                        _selecteOption(
+                            "Option${index + 1}", optionContinues[index]);
                       },
+                      color: _selectedOption == "Option${index + 1}"
+                          ? Colors.green
+                          : Colors.blue,
+                      textColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Text(options[index]),
                     ),
+                  );
+                },
+              ),
             ),
             ElevatedButton(
               onPressed: () {
