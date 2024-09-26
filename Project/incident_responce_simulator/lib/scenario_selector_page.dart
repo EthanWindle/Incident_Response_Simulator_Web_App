@@ -64,7 +64,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              ChoicePage(path: "Scenarios/$_selectedScenario")),
+              ChoicePage(path: "Scenarios/$_selectedScenario/Scenario")),
     );
   }
 
