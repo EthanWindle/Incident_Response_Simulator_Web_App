@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'choice_page.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
@@ -55,8 +53,6 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     setState(() {
       _selectedScenario = str;
     });
-    print(str);
-    print(_selectedScenario);
   }
 
   void _comfirm() {

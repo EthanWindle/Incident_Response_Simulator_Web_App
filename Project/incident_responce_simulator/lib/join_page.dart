@@ -28,11 +28,11 @@ class _JoinPageState extends State<JoinPage> {
         .collection('rooms')
         .snapshots()
         .listen((snapshot) {
-      snapshot.docChanges.forEach((change) {
+      for (var change in snapshot.docChanges) {
         if (change.type == DocumentChangeType.added) {
           print('New room added: ${change.doc.data()}');
         }
-      });
+      }
     });
     return FirebaseFirestore.instance
         .collection('rooms')
