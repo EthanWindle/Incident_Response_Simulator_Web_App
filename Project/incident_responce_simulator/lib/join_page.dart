@@ -36,7 +36,12 @@ class _JoinPageState extends State<JoinPage> {
 
   Future<void> _submit() async {
     CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
-    String roomId = rooms.doc().id;
+    DocumentSnapshot doc = await rooms.doc(_roomCode).get();
+    final data = doc.data() as Map<String, dynamic>;
+
+    // cant connect
+    if (_password != data['password']) {
+    } else {}
 
     /*Navigator.push(
       context,
