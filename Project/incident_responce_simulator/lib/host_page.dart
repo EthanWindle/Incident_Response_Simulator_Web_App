@@ -16,7 +16,7 @@ class _HostPageState extends State<HostPage> {
   String _selectedScenario = "not selected";
 
   Future<void> _submit() async {
-    CollectionReference rooms = FirebaseFirestore.instance.collection('rooms');
+    CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
 
     Room room = Room(
         id: _roomCode,
