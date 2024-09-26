@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:convert';
 import 'outcome_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

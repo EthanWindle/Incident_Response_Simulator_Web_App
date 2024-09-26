@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:convert';
 import 'Room.dart';
 
 class HostPage extends StatefulWidget {
@@ -18,18 +16,19 @@ class _HostPageState extends State<HostPage> {
   String _selectedScenario = "not selected";
 
   Future<void> _submit() async {
-    CollectionReference rooms = FirebaseFirestore.instance.collection('rooms');
-    String roomId = rooms.doc().id;
+    CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
 
-    Room room = Room(id: roomId, name: _roomCode, password: _password);
-    await rooms.add(room.toMap());
-    print(room);
+    Room room = Room(
+        id: _roomCode,
+        password: _password,
+        scenario: "Scenarios/$_selectedScenario");
+    rooms.doc(_roomCode).set(room.toFirestore());
 
     /*Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) =>
-              const Host_View_Page(scenario: _selectedScenario)),
+              const Host_View_Page(room: room)),
     );*/
   }
 
