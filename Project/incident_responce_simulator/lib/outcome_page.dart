@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OutcomePage extends StatelessWidget {
   final String path;
@@ -41,31 +42,26 @@ class Outcome_Page extends StatefulWidget {
 }
 
 class _OutcomePageState extends State<Outcome_Page> {
-  final List _notesList = [];
+  List _notesList = [];
   String _score = "";
   String _outcome = "";
 
   @override
   void initState() {
     super.initState();
-    _generateNotesList();
+    _generateResultsList();
   }
 
-  void _comfirm() {}
+  void _generateResultsList() async {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection(widget.path);
+    DocumentSnapshot doc = await scenariosCollection.doc("Outcome").get();
+    final data = doc.data() as Map<String, dynamic>;
 
-  void _generateNotesList() async {
-    final String response =
-        await rootBundle.loadString('${widget.path}/outcome.json');
-    final Map<String, dynamic> data = json.decode(response);
     setState(() {
-      _score = data["Score"];
-      _outcome = data['Outcome'];
-
-      for (var note in data['Notes']) {
-        // `button` is now a Map<String, String>
-        // Add the option to the list
-        _notesList.add(note["Note"]);
-      }
+      _score = "${data['Score']}/100";
+      _outcome = data['Text'];
+      _notesList = data['Notes'];
     });
   }
 
