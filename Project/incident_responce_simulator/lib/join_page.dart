@@ -25,7 +25,7 @@ class _JoinPageState extends State<JoinPage> {
 
   Stream<List<Room>> getRoomsStream() {
     return FirebaseFirestore.instance
-        .collection('rooms')
+        .collection('Rooms')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
