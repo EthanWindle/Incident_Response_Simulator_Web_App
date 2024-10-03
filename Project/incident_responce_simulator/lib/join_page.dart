@@ -25,7 +25,7 @@ class _JoinPageState extends State<JoinPage> {
 
   Stream<List<Room>> getRoomsStream() {
     return FirebaseFirestore.instance
-        .collection('rooms')
+        .collection('Rooms')
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
@@ -36,7 +36,14 @@ class _JoinPageState extends State<JoinPage> {
 
   Future<void> _submit() async {
     CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
-    String roomId = rooms.doc().id;
+    DocumentSnapshot doc = await rooms.doc(_roomCode).get();
+    final data = doc.data() as Map<String, dynamic>;
+
+    // cant connect
+    if (_password != data['password']) {
+      _showAlertDialog(
+          context, 'Error', 'Incorrect password. Please try again.');
+    } else {}
 
     /*Navigator.push(
       context,
@@ -51,6 +58,26 @@ class _JoinPageState extends State<JoinPage> {
       _roomCode = room.toFirestore()["id"];
       _controller.text = room.toFirestore()["id"];
     });
+  }
+
+  void _showAlertDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
