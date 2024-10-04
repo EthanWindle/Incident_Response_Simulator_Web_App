@@ -11,7 +11,7 @@ https://www.overleaf.com/project/66df65e20c25309cc94241a1
 https://incident-response-simulator.web.app/
 
 # Meeting logs
-`<table>
+<table>
   <tr>
     <th>Date</th>
     <th>Attendees</th>
@@ -125,14 +125,14 @@ https://incident-response-simulator.web.app/
   <tr>
     <td> 03/10/24 </td>
     <td> Arman and Ethan </td>
-    <td></td>
+    <td> Talked about final imporovements needed </td>
   </tr>
   <tr>
     <td> 10/10/24 </td>
     <td> Arman and Ethan </td>
     <td></td>
   </tr>
-</table>`
+</table>
 
 
 ## Getting started
