@@ -4,6 +4,7 @@ class Room {
   String id;
   String password;
   String scenario;
+  List<double> votes = [0, 0, 0];
 
   Room({required this.id, required this.password, required this.scenario});
 
@@ -12,6 +13,7 @@ class Room {
       'id': id,
       'password': password,
       'scenario': scenario,
+      'votes': votes
     };
   }
 
@@ -29,5 +31,13 @@ class Room {
       password: data?['password'],
       scenario: data?['scenario'],
     );
+  }
+
+  String getPath() {
+    return scenario;
+  }
+
+  String getID() {
+    return id;
   }
 }

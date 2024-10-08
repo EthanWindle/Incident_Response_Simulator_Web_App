@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
+import 'host_view_selector.dart';
 
 class HostPage extends StatefulWidget {
   const HostPage({super.key});
@@ -21,15 +22,13 @@ class _HostPageState extends State<HostPage> {
     Room room = Room(
         id: _roomCode,
         password: _password,
-        scenario: "Scenarios/$_selectedScenario");
+        scenario: "Scenarios/$_selectedScenario/Scenario");
     rooms.doc(_roomCode).set(room.toFirestore());
 
-    /*Navigator.push(
+    Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              const Host_View_Page(room: room)),
-    );*/
+      MaterialPageRoute(builder: (context) => HostViewPage(room: room)),
+    );
   }
 
   Stream<List<String>> scenariosStream() {
@@ -37,7 +36,7 @@ class _HostPageState extends State<HostPage> {
         FirebaseFirestore.instance.collection('Scenarios');
     return scenariosCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return doc.id; // Assuming you want to return the document ID
+        return doc.id;
       }).toList();
     });
   }
