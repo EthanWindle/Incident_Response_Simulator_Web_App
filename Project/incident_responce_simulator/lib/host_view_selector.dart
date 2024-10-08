@@ -52,8 +52,8 @@ class _HostViewPageState extends State<HostView_Page> {
   @override
   void initState() {
     super.initState();
+    _updateRoom();
     _setSituation();
-    _setOptions();
   }
 
   void _selecteOption(String str, bool end) async {
@@ -61,6 +61,12 @@ class _HostViewPageState extends State<HostView_Page> {
       _selectedOption = str;
       _isEndChoice = end;
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateRoom();
   }
 
   void _comfirm() {
@@ -96,20 +102,19 @@ class _HostViewPageState extends State<HostView_Page> {
     });
   }
 
-  void _setOptions() async {
+  void _updateRoom() async {
     CollectionReference scenariosCollection =
         FirebaseFirestore.instance.collection(widget.room.getPath());
-
-    scenariosCollection
-        .where('Option', isNotEqualTo: 'Situation')
-        .get()
-        .then((querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        final data = doc.data() as Map<String, dynamic>;
-        options.add(data['Option']);
-        optionContinues.add(data['End']);
-      }
-    });
+    QuerySnapshot qs = await scenariosCollection
+        .where(FieldPath.documentId, isNotEqualTo: "Situation")
+        .get();
+    int count = qs.docs.length;
+    widget.room.setOptionCount(count);
+    CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
+    await rooms.doc(widget.room.getID()).update(widget.room.toFirestore()).then(
+        (value) => print("DocumentSnapshot successfully updated!"),
+        onError: (e) => print("Error updating document $e"));
+    await rooms.doc(widget.room.getID()).update({"votes": widget.room.votes});
   }
 
   Stream<List<String>> optionsStream() {
@@ -232,8 +237,7 @@ class _HostViewPageState extends State<HostView_Page> {
                                       ),
                                       const SizedBox(height: 10.0),
                                       StreamBuilder<double>(
-                                        stream: getVoteCount(
-                                            index), // Stream for vote count
+                                        stream: getVoteCount(index),
                                         builder: (context, voteSnapshot) {
                                           if (voteSnapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -268,9 +272,11 @@ class _HostViewPageState extends State<HostView_Page> {
                                                               totalVotes
                                                           : 0.0;
 
-                                                  return LinearProgressIndicator(
-                                                    value: progress,
-                                                  );
+                                                  return _showVotes
+                                                      ? LinearProgressIndicator(
+                                                          value: progress,
+                                                        )
+                                                      : const SizedBox.shrink();
                                                 } else {
                                                   return const Text('No data');
                                                 }
@@ -295,7 +301,9 @@ class _HostViewPageState extends State<HostView_Page> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      _comfirm();
+                      setState(() {
+                        _showVotes ? _comfirm() : _showVotes = true;
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -303,7 +311,7 @@ class _HostViewPageState extends State<HostView_Page> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ), // Pass the method as a callback
-                    child: const Text('Confirm'),
+                    child: Text(_showVotes ? 'Confirm' : 'Show Votes'),
                   ),
                 ],
               ),

@@ -4,7 +4,7 @@ class Room {
   String id;
   String password;
   String scenario;
-  List<double> votes = [0, 0, 0];
+  List<double> votes = [0, 0, 0, 0];
 
   Room({required this.id, required this.password, required this.scenario});
 
@@ -39,5 +39,12 @@ class Room {
 
   String getID() {
     return id;
+  }
+
+  void setOptionCount(int count) {
+    votes.clear();
+    for (int i = 0; i <= count; i++) {
+      votes.add(0);
+    }
   }
 }
