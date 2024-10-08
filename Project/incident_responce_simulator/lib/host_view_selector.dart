@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'outcome_page.dart';
+import 'host_outcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
 
@@ -44,7 +44,6 @@ class HostView_Page extends StatefulWidget {
 class _HostViewPageState extends State<HostView_Page> {
   List options = [];
   List optionContinues = [];
-  String _selectedOption = "not selected";
   bool _isEndChoice = false;
   String _situation = "";
   bool _showVotes = false;
@@ -56,40 +55,63 @@ class _HostViewPageState extends State<HostView_Page> {
     _setSituation();
   }
 
-  void _selecteOption(String str, bool end) async {
-    setState(() {
-      _selectedOption = str;
-      _isEndChoice = end;
-    });
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _setSituation();
     _updateRoom();
   }
 
-  void _comfirm() {
-    if (_selectedOption == "not selected") {
-      (BuildContext context) => AlertDialog(
-            title: const Text('AlertDialog Title'),
-            content: const Text('AlertDialog description'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context, 'OK'),
-                child: const Text('OK'),
-              ),
-            ],
-          );
-    } else {
-      /* Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => _isEndChoice
-                ? OutcomePage(path: "${widget.path}/$_selectedOption/Next")
-                : HostViewPage(path: "${widget.path}/$_selectedOption/Next"),
-          ));*/
+  @override
+  void didUpdateWidget(covariant HostView_Page oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.room != widget.room) {
+      _setSituation();
     }
+    _setSituation();
+    _updateRoom();
+  }
+
+  void _updatePath() async {
+    CollectionReference optionList =
+        FirebaseFirestore.instance.collection(widget.room.getPath());
+    CollectionReference roomsList =
+        FirebaseFirestore.instance.collection("Rooms");
+
+    DocumentSnapshot room = await roomsList.doc(widget.room.getID()).get();
+    var roomData = room.data() as Map<String, dynamic>;
+    List<int> votes = roomData["votes"];
+    int topVoted = 0;
+    int topIndex = 0;
+    for (int i = 0; i < votes.length; i++) {
+      if (votes[i] > topVoted) {
+        topIndex = i;
+        topVoted = votes[i];
+      }
+    }
+
+    DocumentSnapshot option =
+        await optionList.doc("Option${topIndex + 1}").get();
+    var optionData = option.data() as Map<String, dynamic>;
+    setState(() {
+      _isEndChoice = optionData["End"];
+      widget.room.updateScenario("Option${topIndex + 1}");
+    });
+  }
+
+  void _comfirm() async {
+    _updatePath();
+    await _updateRoom();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => _isEndChoice
+              ? HostOutcomePage(room: widget.room)
+              : HostViewPage(room: widget.room),
+        )).then((value) {
+      _setSituation();
+      _updateRoom();
+    });
   }
 
   void _setSituation() async {
@@ -102,7 +124,7 @@ class _HostViewPageState extends State<HostView_Page> {
     });
   }
 
-  void _updateRoom() async {
+  Future<void> _updateRoom() async {
     CollectionReference scenariosCollection =
         FirebaseFirestore.instance.collection(widget.room.getPath());
     QuerySnapshot qs = await scenariosCollection
@@ -111,10 +133,7 @@ class _HostViewPageState extends State<HostView_Page> {
     int count = qs.docs.length;
     widget.room.setOptionCount(count);
     CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
-    await rooms.doc(widget.room.getID()).update(widget.room.toFirestore()).then(
-        (value) => print("DocumentSnapshot successfully updated!"),
-        onError: (e) => print("Error updating document $e"));
-    await rooms.doc(widget.room.getID()).update({"votes": widget.room.votes});
+    await rooms.doc(widget.room.getID()).update(widget.room.toFirestore());
   }
 
   Stream<List<String>> optionsStream() {
@@ -131,6 +150,7 @@ class _HostViewPageState extends State<HostView_Page> {
     });
   }
 
+  // Return vote values
   Stream<double> getVoteCount(int index) {
     CollectionReference rooms = FirebaseFirestore.instance.collection('Rooms');
     DocumentReference doc = rooms.doc(widget.room.getID());

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Room {
   String id;
@@ -43,8 +44,12 @@ class Room {
 
   void setOptionCount(int count) {
     votes.clear();
-    for (int i = 0; i <= count; i++) {
+    for (int i = 0; i < count; i++) {
       votes.add(0);
     }
+  }
+
+  void updateScenario(String option) {
+    scenario = "$scenario/$option/Next";
   }
 }
