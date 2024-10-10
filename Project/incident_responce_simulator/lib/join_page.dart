@@ -18,9 +18,6 @@ class _JoinPageState extends State<JoinPage> {
   String _roomCode = '';
   String _password = '';
 
-  List<String> scenarios = [];
-  final String _selectedRoom = "not selected";
-
   final TextEditingController _controller = TextEditingController();
 
   Stream<List<Room>> getRoomsStream() {
@@ -30,6 +27,8 @@ class _JoinPageState extends State<JoinPage> {
         .map((snapshot) {
       return snapshot.docs
           .map((doc) => Room.fromMap(doc.data(), doc.id))
+          .where((room) => room.getID() != "Placeholder")
+          .where((doc) => doc.getID().contains(_controller.text))
           .toList();
     });
   }
@@ -39,7 +38,7 @@ class _JoinPageState extends State<JoinPage> {
     DocumentSnapshot doc = await rooms.doc(_roomCode).get();
     final data = doc.data() as Map<String, dynamic>;
 
-    // cant connect
+    // Wrong password popup can not connect
     if (_password != data['password']) {
       _showAlertDialog(
           context, 'Error', 'Incorrect password. Please try again.');
@@ -83,6 +82,7 @@ class _JoinPageState extends State<JoinPage> {
   @override
   void initState() {
     super.initState();
+    _controller.addListener(() => setState(() {}));
   }
 
   @override
@@ -123,11 +123,9 @@ class _JoinPageState extends State<JoinPage> {
                           onPressed: () {
                             _selectRoom(room);
                           },
-                          color: _selectedRoom == room
-                              ? Colors.green
-                              : Colors.blue,
+                          color: _roomCode == room ? Colors.green : Colors.blue,
                           textColor: Colors.white,
-                          child: Text(room.id),
+                          child: Text(room.getID()),
                         ),
                       );
                     },
