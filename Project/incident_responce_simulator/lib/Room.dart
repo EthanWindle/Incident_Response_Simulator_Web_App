@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Room {
   String id;
   String password;
   String scenario;
+  List<double> votes = [0, 0, 0, 0];
 
   Room({required this.id, required this.password, required this.scenario});
 
@@ -12,6 +14,7 @@ class Room {
       'id': id,
       'password': password,
       'scenario': scenario,
+      'votes': votes
     };
   }
 
@@ -29,5 +32,24 @@ class Room {
       password: data?['password'],
       scenario: data?['scenario'],
     );
+  }
+
+  String getPath() {
+    return scenario;
+  }
+
+  String getID() {
+    return id;
+  }
+
+  void setOptionCount(int count) {
+    votes.clear();
+    for (int i = 0; i < count; i++) {
+      votes.add(0);
+    }
+  }
+
+  void updateScenario(String option) {
+    scenario = "$scenario/$option/Next";
   }
 }

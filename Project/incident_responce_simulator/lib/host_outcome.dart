@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'Room.dart';
 
-class OutcomePage extends StatelessWidget {
-  final String path;
-  const OutcomePage({super.key, required this.path});
+class HostOutcomePage extends StatelessWidget {
+  final Room room;
+  const HostOutcomePage({super.key, required this.room});
 
   @override
   Widget build(BuildContext context) {
@@ -21,25 +22,25 @@ class OutcomePage extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Outcome_Page(
+      home: HostOutcome_Page(
         title: 'Incident Response selector Page',
-        path: path,
+        room: room,
       ),
     );
   }
 }
 
-class Outcome_Page extends StatefulWidget {
-  const Outcome_Page({super.key, required this.title, required this.path});
+class HostOutcome_Page extends StatefulWidget {
+  const HostOutcome_Page({super.key, required this.title, required this.room});
 
   final String title;
-  final String path;
+  final Room room;
 
   @override
-  State<Outcome_Page> createState() => _OutcomePageState();
+  State<HostOutcome_Page> createState() => _HostOutcomePageState();
 }
 
-class _OutcomePageState extends State<Outcome_Page> {
+class _HostOutcomePageState extends State<HostOutcome_Page> {
   List _notesList = [];
   String _score = "";
   String _outcome = "";
@@ -52,7 +53,7 @@ class _OutcomePageState extends State<Outcome_Page> {
 
   void _generateResultsList() async {
     CollectionReference scenariosCollection =
-        FirebaseFirestore.instance.collection(widget.path);
+        FirebaseFirestore.instance.collection(widget.room.getPath());
     DocumentSnapshot doc = await scenariosCollection.doc("Outcome").get();
     final data = doc.data() as Map<String, dynamic>;
 

@@ -72,7 +72,7 @@ class _JoinPageState extends State<JoinPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
