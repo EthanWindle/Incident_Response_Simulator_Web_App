@@ -76,11 +76,11 @@ class _OutcomePageState extends State<Outcome_Page> {
           children: [
             Expanded(
               flex: 2,
-              child: Text(_score),
+              child: Text(_outcome),
             ),
             Expanded(
               flex: 2,
-              child: Text(_outcome),
+              child: Text(_score),
             ),
             Expanded(
               child: _notesList.isEmpty
