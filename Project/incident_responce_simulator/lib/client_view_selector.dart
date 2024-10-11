@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'host_outcome.dart';
+import 'client_outcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
 
-class HostViewPage extends StatelessWidget {
+class ClientViewPage extends StatelessWidget {
   final Room room;
-  const HostViewPage({super.key, required this.room});
+  const ClientViewPage({super.key, required this.room});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class HostViewPage extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: HostView_Page(
+      home: ClientView_Page(
         title: 'Incident Response selector Page',
         room: room,
       ),
@@ -31,120 +31,76 @@ class HostViewPage extends StatelessWidget {
   }
 }
 
-class HostView_Page extends StatefulWidget {
-  const HostView_Page({super.key, required this.title, required this.room});
+class ClientView_Page extends StatefulWidget {
+  const ClientView_Page({super.key, required this.title, required this.room});
 
   final String title;
   final Room room;
 
   @override
-  State<HostView_Page> createState() => _HostViewPageState();
+  State<ClientView_Page> createState() => _ClientViewPageState();
 }
 
-class _HostViewPageState extends State<HostView_Page> {
+class _ClientViewPageState extends State<ClientView_Page> {
   List options = [];
   List optionContinues = [];
   bool _isEndChoice = false;
-  String _situation = "";
 
   @override
   void initState() {
     super.initState();
-    _updateRoom();
-    _setSituation();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _setSituation();
-    _updateRoom();
-  }
-
-  @override
-  void didUpdateWidget(covariant HostView_Page oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.room != widget.room) {
-      _setSituation();
-    }
-    _setSituation();
-    _updateRoom();
-  }
-
-  void DisplayVotes() async {
-    setState(() {
-      widget.room.updateShowVote(true);
-    });
-    await _updateRoom();
-  }
-
-  Future<void> _updatePath() async {
-    CollectionReference optionList =
-        FirebaseFirestore.instance.collection(widget.room.getPath());
-    CollectionReference roomsList =
-        FirebaseFirestore.instance.collection("Rooms");
-
-    DocumentSnapshot room = await roomsList.doc(widget.room.getID()).get();
-    var roomData = room.data() as Map<String, dynamic>;
-    List<int> votes = roomData["votes"];
-    int topVoted = 0;
-    int topIndex = 0;
-    for (int i = 0; i < votes.length; i++) {
-      if (votes[i] > topVoted) {
-        topIndex = i;
-        topVoted = votes[i];
-      }
-    }
-
-    DocumentSnapshot option =
-        await optionList.doc("Option${topIndex + 1}").get();
-    var optionData = option.data() as Map<String, dynamic>;
-    setState(() {
-      _isEndChoice = optionData["End"];
-      String option = "Option${topIndex + 1}";
-      widget.room.updateScenario("${widget.room.getPath()}/$option/Next");
-    });
-
-    setState(() {
-      widget.room.updateShowVote(false);
-    });
+    listenToRoom();
   }
 
   void _comfirm() async {
-    await _updatePath();
-    await _updateRoom();
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => _isEndChoice
-              ? HostOutcomePage(room: widget.room)
-              : HostViewPage(room: widget.room),
-        )).then((value) {
-      _setSituation();
-      _updateRoom();
+              ? ClientOutcomePage(room: widget.room)
+              : ClientViewPage(room: widget.room),
+        ));
+  }
+
+  void listenToRoom() {
+    DocumentReference room =
+        FirebaseFirestore.instance.collection("Rooms").doc(widget.room.getID());
+
+    room.snapshots().listen((snapahot) {
+      var data = snapahot.data() as Map<String, dynamic>;
+      String currentPath = data["scenario"];
+      setState(() {
+        if (currentPath != widget.room.getPath()) {
+          widget.room.updateScenario(currentPath);
+          CollectionReference scenario =
+              FirebaseFirestore.instance.collection(currentPath);
+          scenario.doc("Outcome").get().then((docSnapshot) {
+            if (docSnapshot.exists) {
+              setState(() {
+                _isEndChoice = true;
+              });
+            }
+            ;
+          });
+          _comfirm();
+        }
+        if (widget.room.getShowVote() != data["showVotes"]) {
+          setState(() {
+            widget.room.updateShowVote(data["showVotes"]);
+          });
+        }
+      });
     });
   }
 
-  void _setSituation() async {
+  Stream<String> _situationStream() {
     CollectionReference scenariosCollection =
         FirebaseFirestore.instance.collection(widget.room.getPath());
-    DocumentSnapshot doc = await scenariosCollection.doc("Situation").get();
-    final data = doc.data() as Map<String, dynamic>;
-    setState(() {
-      _situation = data["Text"];
+    return scenariosCollection.snapshots().map((snapshot) {
+      var situation = snapshot.docs.firstWhere((doc) => doc.id == "Situation");
+      final data = situation.data() as Map<String, dynamic>;
+      return data["Text"];
     });
-  }
-
-  Future<void> _updateRoom() async {
-    CollectionReference scenariosCollection =
-        FirebaseFirestore.instance.collection(widget.room.getPath());
-    QuerySnapshot qs = await scenariosCollection
-        .where(FieldPath.documentId, isNotEqualTo: "Situation")
-        .get();
-    int count = qs.docs.length;
-    widget.room.setOptionCount(count);
-    CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
-    await rooms.doc(widget.room.getID()).update(widget.room.toFirestore());
   }
 
   Stream<List<String>> optionsStream() {
@@ -215,11 +171,22 @@ class _HostViewPageState extends State<HostView_Page> {
             child: Row(
               children: [
                 Expanded(
-                  flex: 2,
-                  child: _situation.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : Text(_situation),
-                ),
+                    flex: 2,
+                    child: StreamBuilder<String>(
+                        stream: _situationStream(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (snapshot.hasData &&
+                              snapshot.data!.isNotEmpty) {
+                            return Text(snapshot.data!);
+                          }
+                          return const Text("Situation failed to load.");
+                        })),
                 Expanded(
                   child: Column(
                     children: [
@@ -341,11 +308,7 @@ class _HostViewPageState extends State<HostView_Page> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            widget.room.getShowVote()
-                                ? _comfirm()
-                                : DisplayVotes();
-                          });
+                          setState(() {});
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -353,47 +316,12 @@ class _HostViewPageState extends State<HostView_Page> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ), // Pass the method as a callback
-                        child: Text(widget.room.getShowVote()
-                            ? 'Confirm'
-                            : 'Show Votes'),
+                        child: Text('Vote'),
                       ),
                     ],
                   ),
                 ),
               ],
-            ),
-          ),
-          Positioned(
-            top: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.blueAccent,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(2, 2),
-                  ),
-                ],
-              ),
-              child: StreamBuilder<double>(
-                stream: getTotalVotes(),
-                builder: (context, totalVoteSnapshot) {
-                  if (totalVoteSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // Show progress while loading
-                  } else if (totalVoteSnapshot.hasError) {
-                    return Text('Error: ${totalVoteSnapshot.error}');
-                  } else if (totalVoteSnapshot.hasData) {
-                    double totalVotes = totalVoteSnapshot.data!;
-                    return Text(totalVotes.toString());
-                  }
-                  return const Text("Cant see votes.");
-                },
-              ),
             ),
           ),
         ],
