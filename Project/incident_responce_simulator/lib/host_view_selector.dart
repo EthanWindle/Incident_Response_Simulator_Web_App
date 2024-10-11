@@ -75,7 +75,8 @@ class _HostViewPageState extends State<HostView_Page> {
     setState(() {
       widget.room.updateShowVote(true);
     });
-    await _updateRoom();
+    CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
+    await rooms.doc(widget.room.getID()).update({"showVotes": true});
   }
 
   Future<void> _updatePath() async {
@@ -86,13 +87,13 @@ class _HostViewPageState extends State<HostView_Page> {
 
     DocumentSnapshot room = await roomsList.doc(widget.room.getID()).get();
     var roomData = room.data() as Map<String, dynamic>;
-    List<int> votes = roomData["votes"];
-    int topVoted = 0;
+    Map<String, double> votes = roomData["votes"];
+    double topVoted = 0;
     int topIndex = 0;
     for (int i = 0; i < votes.length; i++) {
-      if (votes[i] > topVoted) {
+      if (votes["$i"]! > topVoted) {
         topIndex = i;
-        topVoted = votes[i];
+        topVoted = votes["$i"]!;
       }
     }
 
@@ -168,10 +169,10 @@ class _HostViewPageState extends State<HostView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
-        if (list != null && index < list.length) {
-          return (list[index] is double) ? list[index] : 0.0;
+        if (map != null && index < map.length) {
+          return (map["$index"] as num).toDouble();
         }
       }
       return 0.0;
@@ -185,15 +186,15 @@ class _HostViewPageState extends State<HostView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
         double count = 0;
-        if (list != null) {
-          for (var vote in list) {
-            if (vote is double || vote is int) {
-              count += vote.toDouble();
+        if (map != null) {
+          map.forEach((key, value) {
+            if (value is num) {
+              count += value.toDouble(); // Safely add votes
             }
-          }
+          });
         }
         return count;
       }
@@ -246,14 +247,12 @@ class _HostViewPageState extends State<HostView_Page> {
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue[
-                                            50], // Background color of the box
+                                        color: Colors.blue[50],
                                         border: Border.all(
-                                          color: Colors.blue, // Border color
-                                          width: 2, // Border width
+                                          color: Colors.blue,
+                                          width: 2,
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Rounded corners
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -285,8 +284,7 @@ class _HostViewPageState extends State<HostView_Page> {
                                                     voteSnapshot.data!;
 
                                                 return StreamBuilder<double>(
-                                                  stream:
-                                                      getTotalVotes(), // Stream for total votes
+                                                  stream: getTotalVotes(),
                                                   builder: (context,
                                                       totalVoteSnapshot) {
                                                     if (totalVoteSnapshot

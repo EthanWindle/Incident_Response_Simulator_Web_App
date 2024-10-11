@@ -43,8 +43,9 @@ class ClientView_Page extends StatefulWidget {
 
 class _ClientViewPageState extends State<ClientView_Page> {
   List options = [];
-  List optionContinues = [];
   bool _isEndChoice = false;
+  int currentVote = -1;
+  int newVote = -1;
 
   @override
   void initState() {
@@ -60,6 +61,22 @@ class _ClientViewPageState extends State<ClientView_Page> {
               ? ClientOutcomePage(room: widget.room)
               : ClientViewPage(room: widget.room),
         ));
+  }
+
+  void updateVote() async {
+    if (newVote == -1 || newVote == currentVote) {
+      return;
+    }
+    DocumentReference room =
+        FirebaseFirestore.instance.collection("Rooms").doc(widget.room.getID());
+
+    if (currentVote != -1) {
+      await room.update({"votes.$currentVote": FieldValue.increment(-1)});
+    }
+    await room.update({"votes.$newVote": FieldValue.increment(1)});
+    setState(() {
+      currentVote = newVote;
+    });
   }
 
   void listenToRoom() {
@@ -124,10 +141,10 @@ class _ClientViewPageState extends State<ClientView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
-        if (list != null && index < list.length) {
-          return (list[index] is double) ? list[index] : 0.0;
+        if (map != null && index < map.length) {
+          return (map["$index"] as num).toDouble();
         }
       }
       return 0.0;
@@ -141,15 +158,15 @@ class _ClientViewPageState extends State<ClientView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
         double count = 0;
-        if (list != null) {
-          for (var vote in list) {
-            if (vote is double || vote is int) {
-              count += vote.toDouble();
+        if (map != null) {
+          map.forEach((key, value) {
+            if (value is num) {
+              count += value.toDouble(); // Safely add votes
             }
-          }
+          });
         }
         return count;
       }
@@ -172,6 +189,7 @@ class _ClientViewPageState extends State<ClientView_Page> {
               children: [
                 Expanded(
                     flex: 2,
+                    // display situation
                     child: StreamBuilder<String>(
                         stream: _situationStream(),
                         builder: (context, snapshot) {
@@ -210,91 +228,104 @@ class _ClientViewPageState extends State<ClientView_Page> {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16.0),
-                                    child: Container(
+                                    child: MaterialButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          newVote = index;
+                                        });
+                                      },
                                       padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[
-                                            50], // Background color of the box
-                                        border: Border.all(
-                                          color: Colors.blue, // Border color
-                                          width: 2, // Border width
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: newVote == index
+                                              ? Colors.green[50]
+                                              : Colors.blue[50],
+                                          border: Border.all(
+                                            color: currentVote == index
+                                                ? Colors.green
+                                                : Colors.blue,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Rounded corners
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            options[index],
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.blue, // Text color
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              options[index],
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                color:
+                                                    Colors.blue, // Text color
+                                              ),
+                                              textAlign: TextAlign
+                                                  .center, // Align text to the center
                                             ),
-                                            textAlign: TextAlign
-                                                .center, // Align text to the center
-                                          ),
-                                          const SizedBox(height: 10.0),
-                                          StreamBuilder<double>(
-                                            stream: getVoteCount(index),
-                                            builder: (context, voteSnapshot) {
-                                              if (voteSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const CircularProgressIndicator(); // Show progress while loading
-                                              } else if (voteSnapshot
-                                                  .hasError) {
-                                                return Text(
-                                                    'Error: ${voteSnapshot.error}');
-                                              } else if (voteSnapshot.hasData) {
-                                                double voteCount =
-                                                    voteSnapshot.data!;
+                                            const SizedBox(height: 10.0),
+                                            // Vote split bars
+                                            StreamBuilder<double>(
+                                              stream: getVoteCount(index),
+                                              builder: (context, voteSnapshot) {
+                                                if (voteSnapshot
+                                                        .connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const CircularProgressIndicator(); // Show progress while loading
+                                                } else if (voteSnapshot
+                                                    .hasError) {
+                                                  return Text(
+                                                      'Error: ${voteSnapshot.error}');
+                                                } else if (voteSnapshot
+                                                    .hasData) {
+                                                  double voteCount =
+                                                      voteSnapshot.data!;
 
-                                                return StreamBuilder<double>(
-                                                  stream:
-                                                      getTotalVotes(), // Stream for total votes
-                                                  builder: (context,
-                                                      totalVoteSnapshot) {
-                                                    if (totalVoteSnapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return const CircularProgressIndicator(); // Show progress while loading
-                                                    } else if (totalVoteSnapshot
-                                                        .hasError) {
-                                                      return Text(
-                                                          'Error: ${totalVoteSnapshot.error}');
-                                                    } else if (totalVoteSnapshot
-                                                        .hasData) {
-                                                      double totalVotes =
-                                                          totalVoteSnapshot
-                                                              .data!;
-                                                      double progress =
-                                                          totalVotes != 0
-                                                              ? voteCount /
-                                                                  totalVotes
-                                                              : 0.0;
+                                                  return StreamBuilder<double>(
+                                                    stream:
+                                                        getTotalVotes(), // Stream for total votes
+                                                    builder: (context,
+                                                        totalVoteSnapshot) {
+                                                      if (totalVoteSnapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return const CircularProgressIndicator(); // Show progress while loading
+                                                      } else if (totalVoteSnapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            'Error: ${totalVoteSnapshot.error}');
+                                                      } else if (totalVoteSnapshot
+                                                          .hasData) {
+                                                        double totalVotes =
+                                                            totalVoteSnapshot
+                                                                .data!;
+                                                        double progress =
+                                                            totalVotes != 0
+                                                                ? voteCount /
+                                                                    totalVotes
+                                                                : 0.0;
 
-                                                      return widget.room
-                                                              .getShowVote()
-                                                          ? LinearProgressIndicator(
-                                                              value: progress,
-                                                            )
-                                                          : const SizedBox
-                                                              .shrink();
-                                                    } else {
-                                                      return const Text(
-                                                          'No data');
-                                                    }
-                                                  },
-                                                );
-                                              } else {
-                                                return const Text('No data');
-                                              }
-                                            },
-                                          ),
-                                        ],
+                                                        return widget.room
+                                                                .getShowVote()
+                                                            ? LinearProgressIndicator(
+                                                                value: progress,
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink();
+                                                      } else {
+                                                        return const Text(
+                                                            'No data');
+                                                      }
+                                                    },
+                                                  );
+                                                } else {
+                                                  return const Text('No data');
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );
@@ -308,7 +339,7 @@ class _ClientViewPageState extends State<ClientView_Page> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {});
+                          updateVote();
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
