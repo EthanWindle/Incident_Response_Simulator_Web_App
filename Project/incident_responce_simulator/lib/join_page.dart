@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firebase_options.dart';
-import 'dart:convert';
 import 'Room.dart';
+import 'client_view_selector.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({super.key});
@@ -42,14 +39,14 @@ class _JoinPageState extends State<JoinPage> {
     if (_password != data['password']) {
       _showAlertDialog(
           context, 'Error', 'Incorrect password. Please try again.');
-    } else {}
-
-    /*Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              const Join_View_Page(scenario: _selectedScenario)),
-    );*/
+    } else {
+      Room room =
+          Room(id: _roomCode, password: _password, scenario: data["scenario"]);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ClientViewPage(room: room)),
+      );
+    }
   }
 
   void _selectRoom(Room room) async {

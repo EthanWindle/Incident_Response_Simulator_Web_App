@@ -46,7 +46,6 @@ class _HostViewPageState extends State<HostView_Page> {
   List optionContinues = [];
   bool _isEndChoice = false;
   String _situation = "";
-  bool _showVotes = false;
 
   @override
   void initState() {
@@ -72,7 +71,15 @@ class _HostViewPageState extends State<HostView_Page> {
     _updateRoom();
   }
 
-  void _updatePath() async {
+  void DisplayVotes() async {
+    setState(() {
+      widget.room.updateShowVote(true);
+    });
+    CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
+    await rooms.doc(widget.room.getID()).update({"showVotes": true});
+  }
+
+  Future<void> _updatePath() async {
     CollectionReference optionList =
         FirebaseFirestore.instance.collection(widget.room.getPath());
     CollectionReference roomsList =
@@ -80,13 +87,13 @@ class _HostViewPageState extends State<HostView_Page> {
 
     DocumentSnapshot room = await roomsList.doc(widget.room.getID()).get();
     var roomData = room.data() as Map<String, dynamic>;
-    List<int> votes = roomData["votes"];
-    int topVoted = 0;
+    Map<String, double> votes = roomData["votes"];
+    double topVoted = 0;
     int topIndex = 0;
     for (int i = 0; i < votes.length; i++) {
-      if (votes[i] > topVoted) {
+      if (votes["$i"]! > topVoted) {
         topIndex = i;
-        topVoted = votes[i];
+        topVoted = votes["$i"]!;
       }
     }
 
@@ -95,12 +102,17 @@ class _HostViewPageState extends State<HostView_Page> {
     var optionData = option.data() as Map<String, dynamic>;
     setState(() {
       _isEndChoice = optionData["End"];
-      widget.room.updateScenario("Option${topIndex + 1}");
+      String option = "Option${topIndex + 1}";
+      widget.room.updateScenario("${widget.room.getPath()}/$option/Next");
+    });
+
+    setState(() {
+      widget.room.updateShowVote(false);
     });
   }
 
   void _comfirm() async {
-    _updatePath();
+    await _updatePath();
     await _updateRoom();
     Navigator.push(
         context,
@@ -138,7 +150,7 @@ class _HostViewPageState extends State<HostView_Page> {
 
   Stream<List<String>> optionsStream() {
     CollectionReference scenariosCollection =
-        FirebaseFirestore.instance.collection('${widget.room.getPath()}');
+        FirebaseFirestore.instance.collection(widget.room.getPath());
 
     return scenariosCollection.snapshots().map((snapshot) {
       return snapshot.docs.where((doc) => doc.id != "Situation").map((doc) {
@@ -157,10 +169,10 @@ class _HostViewPageState extends State<HostView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
-        if (list != null && index < list.length) {
-          return (list[index] is double) ? list[index] : 0.0;
+        if (map != null && index < map.length) {
+          return (map["$index"] as num).toDouble();
         }
       }
       return 0.0;
@@ -174,15 +186,15 @@ class _HostViewPageState extends State<HostView_Page> {
     return doc.snapshots().map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         final data = snapshot.data() as Map<String, dynamic>;
-        var list = data["votes"] as List<dynamic>?;
+        Map<String, double>? map = data["votes"];
 
         double count = 0;
-        if (list != null) {
-          for (var vote in list) {
-            if (vote is double || vote is int) {
-              count += vote.toDouble();
+        if (map != null) {
+          map.forEach((key, value) {
+            if (value is num) {
+              count += value.toDouble(); // Safely add votes
             }
-          }
+          });
         }
         return count;
       }
@@ -235,14 +247,12 @@ class _HostViewPageState extends State<HostView_Page> {
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue[
-                                            50], // Background color of the box
+                                        color: Colors.blue[50],
                                         border: Border.all(
-                                          color: Colors.blue, // Border color
-                                          width: 2, // Border width
+                                          color: Colors.blue,
+                                          width: 2,
                                         ),
-                                        borderRadius: BorderRadius.circular(
-                                            10), // Rounded corners
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
@@ -250,7 +260,7 @@ class _HostViewPageState extends State<HostView_Page> {
                                         children: [
                                           Text(
                                             options[index],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 18,
                                               color: Colors.blue, // Text color
                                             ),
@@ -274,8 +284,7 @@ class _HostViewPageState extends State<HostView_Page> {
                                                     voteSnapshot.data!;
 
                                                 return StreamBuilder<double>(
-                                                  stream:
-                                                      getTotalVotes(), // Stream for total votes
+                                                  stream: getTotalVotes(),
                                                   builder: (context,
                                                       totalVoteSnapshot) {
                                                     if (totalVoteSnapshot
@@ -298,7 +307,8 @@ class _HostViewPageState extends State<HostView_Page> {
                                                                   totalVotes
                                                               : 0.0;
 
-                                                      return _showVotes
+                                                      return widget.room
+                                                              .getShowVote()
                                                           ? LinearProgressIndicator(
                                                               value: progress,
                                                             )
@@ -330,7 +340,9 @@ class _HostViewPageState extends State<HostView_Page> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            _showVotes ? _comfirm() : _showVotes = true;
+                            widget.room.getShowVote()
+                                ? _comfirm()
+                                : DisplayVotes();
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -339,7 +351,9 @@ class _HostViewPageState extends State<HostView_Page> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ), // Pass the method as a callback
-                        child: Text(_showVotes ? 'Confirm' : 'Show Votes'),
+                        child: Text(widget.room.getShowVote()
+                            ? 'Confirm'
+                            : 'Show Votes'),
                       ),
                     ],
                   ),
@@ -359,7 +373,7 @@ class _HostViewPageState extends State<HostView_Page> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
                     blurRadius: 6,
-                    offset: Offset(2, 2),
+                    offset: const Offset(2, 2),
                   ),
                 ],
               ),
