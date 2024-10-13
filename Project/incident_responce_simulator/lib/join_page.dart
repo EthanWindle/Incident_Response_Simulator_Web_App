@@ -99,6 +99,7 @@ class _JoinPageState extends State<JoinPage> {
             color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
             child: Column(
               children: [
+                const SizedBox(height: 10),
                 IconButton(
                   icon: Icon(isCollapsed
                       ? Icons.arrow_forward_ios
@@ -112,65 +113,86 @@ class _JoinPageState extends State<JoinPage> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Join a room page'.\n\n"
+                      "On the left you will see a list of all the currently active rooms. These are buttons you can click to fill in the form on the right.\n\n"
+                      "The form on the right is to be filled with the relevant details regarding the room you want to join."
+                      "As you type the name of the room the form the list will update to show what room sit could be. \n\n"
+                      "Once the form is filled out click 'Join Simulation' button to join the simulation at the current point. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),
           ),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(50.0),
               child: Row(
                 children: [
                   Expanded(
                     flex: 2,
-                    child: StreamBuilder<List<Room>>(
-                      stream: getRoomsStream(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        }
-                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                          return const Center(
-                              child: Text('No rooms available.'));
-                        }
+                    child: Column(
+                      children: [
+                        const Text(
+                          "List Of Active Rooms",
+                          style: TextStyle(
+                            fontSize: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: StreamBuilder<List<Room>>(
+                            stream: getRoomsStream(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              if (snapshot.hasError) {
+                                return Center(
+                                    child: Text('Error: ${snapshot.error}'));
+                              }
+                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const Center(
+                                    child: Text('No rooms available.'));
+                              }
 
-                        List<Room> rooms = snapshot.data!;
+                              List<Room> rooms = snapshot.data!;
 
-                        return ListView.builder(
-                          itemCount: rooms.length,
-                          itemBuilder: (context, index) {
-                            Room room = rooms[index];
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: MaterialButton(
-                                onPressed: () {
-                                  _selectRoom(room);
+                              return ListView.builder(
+                                itemCount: rooms.length,
+                                itemBuilder: (context, index) {
+                                  Room room = rooms[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: MaterialButton(
+                                      onPressed: () {
+                                        _selectRoom(room);
+                                      },
+                                      color: _roomCode == room
+                                          ? Colors.green
+                                          : Colors.blue,
+                                      textColor: Colors.white,
+                                      child: Text(room.getID()),
+                                    ),
+                                  );
                                 },
-                                color: _roomCode == room
-                                    ? Colors.green
-                                    : Colors.blue,
-                                textColor: Colors.white,
-                                child: Text(room.getID()),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(
-                      width: 16.0), // Fixed the width since it's in a Row.
+                  const SizedBox(width: 40.0),
                   Expanded(
                     flex: 2,
                     child: Form(
@@ -181,7 +203,7 @@ class _JoinPageState extends State<JoinPage> {
                           TextFormField(
                             controller: _controller,
                             decoration: const InputDecoration(
-                                labelText: 'Enter your Server Name'),
+                                labelText: "Enter Your Room' Name"),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a question';
@@ -195,7 +217,8 @@ class _JoinPageState extends State<JoinPage> {
                           const SizedBox(height: 20),
                           TextFormField(
                             decoration: const InputDecoration(
-                                labelText: 'Enter your Server Password'),
+                                labelText:
+                                    "Enter Your Room's Password (If Applicable)"),
                             onSaved: (value) {
                               _password = value!;
                             },

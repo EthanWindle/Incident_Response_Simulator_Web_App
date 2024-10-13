@@ -205,10 +205,22 @@ class _ClientViewPageState extends State<ClientView_Page> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Participants' View of the Choice Page'.\n\n"
+                      "On the left is the current situation you are facing."
+                      "On the right is a list the possible choices you can vote for. \n\n"
+                      "Click the choice you want to vote for to select it, the selected choice will be displayed as green."
+                      "Once you know the choice you have selected is the one you want to make push the 'Vote' to submit it.\n\n"
+                      "After you have voted the option you voted for will be outlined in green."
+                      "If you want to change your vote before the stage ends you can by following the same steps as when you initally voted.\n\n"
+                      "Once the voting has concluded, bars will show up under each option display what percentage of votes it got. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),

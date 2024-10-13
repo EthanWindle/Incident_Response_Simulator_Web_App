@@ -104,6 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
             child: Column(
               children: [
+                const SizedBox(height: 10),
                 IconButton(
                   icon: Icon(isCollapsed
                       ? Icons.arrow_forward_ios
@@ -117,10 +118,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the home page and central hub.\n\n"
+                      "If you are wanting to run a simulator by yourself please click on the 'Run By Yourself' button.\n\n"
+                      "If your intention is to host a simulated training session please clock the 'Host A Room' button. \n\n"
+                      "If your intention is to participate a simulated training session please clock the 'Join A Room' button. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),

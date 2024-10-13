@@ -117,6 +117,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
             color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
             child: Column(
               children: [
+                const SizedBox(height: 10),
                 IconButton(
                   icon: Icon(isCollapsed
                       ? Icons.arrow_forward_ios
@@ -130,10 +131,21 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Scenario Selection Page'.\n\n"
+                      "In the middle of the screen there is a list of all the avaliable simulated scenarios for you to choose from."
+                      "Each scenario is button you will need to click to select your choice. Your currently selected choice will display green. \n\n"
+                      "If there is a particular scenario you want to choose you can use the form above to filter the list."
+                      "The first field will filter the list to only display scenarios whose name contains the input."
+                      "The second field will do the same but withe scenarios author's name.\n\n"
+                      "Once you have selected ypu chosen scenario please click the 'comfim' to begin the simulation. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -142,7 +154,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(70),
+                  padding: const EdgeInsets.all(90),
                   child: Column(
                     children: [
                       Flexible(
@@ -151,14 +163,19 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              const Text("Filters: ",
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                  )),
+                              const SizedBox(width: 16),
                               Flexible(
                                 child: TextFormField(
                                   controller: _scenarioController,
                                   decoration: const InputDecoration(
-                                      labelText: 'Enter your scenario Name'),
+                                      labelText: 'By Scenario Name'),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter a namew';
+                                      return 'Please enter a name';
                                     }
                                     return null;
                                   },
@@ -169,8 +186,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                                 child: TextFormField(
                                   controller: _aurthoroController,
                                   decoration: const InputDecoration(
-                                      labelText:
-                                          "Enter your scenario's author's Name"),
+                                      labelText: "By Author's Name"),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Please enter a namew';
@@ -183,7 +199,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 20.0),
                       Expanded(
                         child: StreamBuilder<List<String>>(
                           stream:

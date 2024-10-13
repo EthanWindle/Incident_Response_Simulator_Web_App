@@ -95,10 +95,19 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Outcome Page'.\n\n"
+                      "At the top is the final outcome of the choice your team made."
+                      "In the center is the score you recieved for making the choices your team did."
+                      "At the bottom is a list the note tips and advice regarding your team's chosen path and what may have been a better choice at points. \n\n"
+                      "In the bottom right corner lies a 'Close Room' button to push and close the room once your team have finished going over the feedback. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),

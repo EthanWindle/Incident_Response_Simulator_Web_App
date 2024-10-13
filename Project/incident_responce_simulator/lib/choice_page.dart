@@ -141,10 +141,19 @@ class _ChoicePageState extends State<Choice_Page> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Choice Page'.\n\n"
+                      "On the left is the current situation you are facing."
+                      "On the right is a list the possible choices you can make. \n\n"
+                      "Click the choice you want to make to select it, the selected choice will be displayed as green."
+                      "Once you know the choice you have selected is the one you want to make push the 'Confirm' button to advance to the next stage of the simulation.\n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),

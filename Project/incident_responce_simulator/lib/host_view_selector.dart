@@ -233,10 +233,21 @@ class _HostViewPageState extends State<HostView_Page> {
                 ),
                 if (!isCollapsed) ...[
                   const SizedBox(height: 20),
-                  Text(
-                    "EXPLAIN THE PAGE",
-                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
-                  )
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Host's View of the Choice Page'.\n\n"
+                      "On the left is the current situation you are facing."
+                      "On the right is a list the possible choices the participants can vote for. \n\n"
+                      "In the top right corner a number is display to indicate how many votes have come through so far. \n\n"
+                      "A 'Show Votes button below the list of options can be clicked to close the viting and display what percentage of votes each option got as a bar underneth each one.\n\n"
+                      "Once you have concluded the voting, the 'Show Votes' button will transform into a 'Continue' button."
+                      "Click this button to move the entire simulation onto the next stage. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -429,7 +440,7 @@ class _HostViewPageState extends State<HostView_Page> {
                                   ),
                                 ), // Pass the method as a callback
                                 child: Text(widget.room.getShowVote()
-                                    ? 'Confirm'
+                                    ? 'Continue'
                                     : 'Show Votes'),
                               ),
                             ),
