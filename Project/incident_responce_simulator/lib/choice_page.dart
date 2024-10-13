@@ -46,6 +46,7 @@ class _ChoicePageState extends State<Choice_Page> {
   String _selectedOption = "not selected";
   bool _isEndChoice = false;
   String _situation = "";
+  bool isCollapsed = true;
 
   @override
   void initState() {
@@ -117,55 +118,90 @@ class _ChoicePageState extends State<Choice_Page> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: _situation.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : Text(_situation),
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: options.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: MaterialButton(
-                      onPressed: () {
-                        _selecteOption(
-                            "Option${index + 1}", optionContinues[index]);
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: _situation.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : Text(_situation),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: MaterialButton(
+                            onPressed: () {
+                              _selecteOption(
+                                  "Option${index + 1}", optionContinues[index]);
+                            },
+                            color: _selectedOption == "Option${index + 1}"
+                                ? Colors.green
+                                : Colors.blue,
+                            textColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Text(options[index]),
+                          ),
+                        );
                       },
-                      color: _selectedOption == "Option${index + 1}"
-                          ? Colors.green
-                          : Colors.blue,
-                      textColor: Colors.white,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _comfirm();
+                    },
+                    style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Text(options[index]),
-                    ),
-                  );
-                },
+                    ), // Pass the method as a callback
+                    child: const Text('Confirm'),
+                  ),
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                _comfirm();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ), // Pass the method as a callback
-              child: const Text('Confirm'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

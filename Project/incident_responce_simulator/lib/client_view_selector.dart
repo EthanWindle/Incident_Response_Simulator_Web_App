@@ -46,6 +46,7 @@ class _ClientViewPageState extends State<ClientView_Page> {
   bool _isEndChoice = false;
   int currentVote = -1;
   int newVote = -1;
+  bool isCollapsed = true;
 
   @override
   void initState() {
@@ -181,173 +182,217 @@ class _ClientViewPageState extends State<ClientView_Page> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Stack(
+      body: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
               children: [
-                Expanded(
-                    flex: 2,
-                    // display situation
-                    child: StreamBuilder<String>(
-                        stream: _situationStream(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.isNotEmpty) {
-                            return Text(snapshot.data!);
-                          }
-                          return const Text("Situation failed to load.");
-                        })),
-                Expanded(
-                  child: Column(
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
                     children: [
                       Expanded(
-                        child: StreamBuilder<List<String>>(
-                          stream: optionsStream(), // Stream for options
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.hasData &&
-                                snapshot.data!.isNotEmpty) {
-                              List<String> options = snapshot.data!;
+                          flex: 2,
+                          // display situation
+                          child: StreamBuilder<String>(
+                              stream: _situationStream(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (snapshot.hasData &&
+                                    snapshot.data!.isNotEmpty) {
+                                  return Text(snapshot.data!);
+                                }
+                                return const Text("Situation failed to load.");
+                              })),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: StreamBuilder<List<String>>(
+                                stream: optionsStream(), // Stream for options
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    List<String> options = snapshot.data!;
 
-                              return ListView.builder(
-                                itemCount: options.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0),
-                                    child: MaterialButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          newVote = index;
-                                        });
-                                      },
-                                      padding: const EdgeInsets.all(16),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: newVote == index
-                                              ? Colors.green[50]
-                                              : Colors.blue[50],
-                                          border: Border.all(
-                                            color: currentVote == index
-                                                ? Colors.green
-                                                : Colors.blue,
-                                            width: 2,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              options[index],
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                color:
-                                                    Colors.blue, // Text color
+                                    return ListView.builder(
+                                      itemCount: options.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16.0),
+                                          child: MaterialButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                newVote = index;
+                                              });
+                                            },
+                                            padding: const EdgeInsets.all(16),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: newVote == index
+                                                    ? Colors.green[50]
+                                                    : Colors.blue[50],
+                                                border: Border.all(
+                                                  color: currentVote == index
+                                                      ? Colors.green
+                                                      : Colors.blue,
+                                                  width: 2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
-                                              textAlign: TextAlign
-                                                  .center, // Align text to the center
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            // Vote split bars
-                                            StreamBuilder<double>(
-                                              stream: getVoteCount(index),
-                                              builder: (context, voteSnapshot) {
-                                                if (voteSnapshot
-                                                        .connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return const CircularProgressIndicator(); // Show progress while loading
-                                                } else if (voteSnapshot
-                                                    .hasError) {
-                                                  return Text(
-                                                      'Error: ${voteSnapshot.error}');
-                                                } else if (voteSnapshot
-                                                    .hasData) {
-                                                  double voteCount =
-                                                      voteSnapshot.data!;
-
-                                                  return StreamBuilder<double>(
-                                                    stream:
-                                                        getTotalVotes(), // Stream for total votes
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    options[index],
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      color: Colors
+                                                          .blue, // Text color
+                                                    ),
+                                                    textAlign: TextAlign
+                                                        .center, // Align text to the center
+                                                  ),
+                                                  const SizedBox(height: 10.0),
+                                                  // Vote split bars
+                                                  StreamBuilder<double>(
+                                                    stream: getVoteCount(index),
                                                     builder: (context,
-                                                        totalVoteSnapshot) {
-                                                      if (totalVoteSnapshot
+                                                        voteSnapshot) {
+                                                      if (voteSnapshot
                                                               .connectionState ==
                                                           ConnectionState
                                                               .waiting) {
                                                         return const CircularProgressIndicator(); // Show progress while loading
-                                                      } else if (totalVoteSnapshot
+                                                      } else if (voteSnapshot
                                                           .hasError) {
                                                         return Text(
-                                                            'Error: ${totalVoteSnapshot.error}');
-                                                      } else if (totalVoteSnapshot
+                                                            'Error: ${voteSnapshot.error}');
+                                                      } else if (voteSnapshot
                                                           .hasData) {
-                                                        double totalVotes =
-                                                            totalVoteSnapshot
-                                                                .data!;
-                                                        double progress =
-                                                            totalVotes != 0
-                                                                ? voteCount /
-                                                                    totalVotes
-                                                                : 0.0;
+                                                        double voteCount =
+                                                            voteSnapshot.data!;
 
-                                                        return widget.room
-                                                                .getShowVote()
-                                                            ? LinearProgressIndicator(
-                                                                value: progress,
-                                                              )
-                                                            : const SizedBox
-                                                                .shrink();
+                                                        return StreamBuilder<
+                                                            double>(
+                                                          stream:
+                                                              getTotalVotes(), // Stream for total votes
+                                                          builder: (context,
+                                                              totalVoteSnapshot) {
+                                                            if (totalVoteSnapshot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .waiting) {
+                                                              return const CircularProgressIndicator(); // Show progress while loading
+                                                            } else if (totalVoteSnapshot
+                                                                .hasError) {
+                                                              return Text(
+                                                                  'Error: ${totalVoteSnapshot.error}');
+                                                            } else if (totalVoteSnapshot
+                                                                .hasData) {
+                                                              double
+                                                                  totalVotes =
+                                                                  totalVoteSnapshot
+                                                                      .data!;
+                                                              double progress =
+                                                                  totalVotes !=
+                                                                          0
+                                                                      ? voteCount /
+                                                                          totalVotes
+                                                                      : 0.0;
+
+                                                              return widget.room
+                                                                      .getShowVote()
+                                                                  ? LinearProgressIndicator(
+                                                                      value:
+                                                                          progress,
+                                                                    )
+                                                                  : const SizedBox
+                                                                      .shrink();
+                                                            } else {
+                                                              return const Text(
+                                                                  'No data');
+                                                            }
+                                                          },
+                                                        );
                                                       } else {
                                                         return const Text(
                                                             'No data');
                                                       }
                                                     },
-                                                  );
-                                                } else {
-                                                  return const Text('No data');
-                                                }
-                                              },
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return const Text('No options available');
+                                  }
                                 },
-                              );
-                            } else {
-                              return const Text('No options available');
-                            }
-                          },
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                updateVote();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ), // Pass the method as a callback
+                              child: Text(
+                                  currentVote == -1 ? 'Vote' : "Update Vote"),
+                            ),
+                          ],
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          updateVote();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ), // Pass the method as a callback
-                        child: Text('Vote'),
                       ),
                     ],
                   ),

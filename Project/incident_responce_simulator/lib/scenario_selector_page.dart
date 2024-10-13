@@ -26,7 +26,7 @@ class ScenarioSelector extends StatelessWidget {
         useMaterial3: true,
       ),
       home:
-          const ScenarioSelectorPage(title: 'Incident Response selector Page'),
+          const ScenarioSelectorPage(title: 'Incident Response Selector Page'),
     );
   }
 }
@@ -41,12 +41,19 @@ class ScenarioSelectorPage extends StatefulWidget {
 }
 
 class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
+  // Operating Variables
   List scenarios = [];
   String _selectedScenario = "not selected";
+  final TextEditingController _scenarioController = TextEditingController();
+  final TextEditingController _aurthoroController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isCollapsed = true;
 
   @override
   void initState() {
     super.initState();
+    _scenarioController.addListener(() => setState(() {}));
+    _aurthoroController.addListener(() => setState(() {}));
   }
 
   void _selecteScenario(String str) async {
@@ -68,77 +75,195 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     CollectionReference scenariosCollection =
         FirebaseFirestore.instance.collection('Scenarios');
     return scenariosCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
+      return snapshot.docs
+          .where((doc) => doc.id.contains(_scenarioController.text))
+          .where((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return data["Author"].contains(_aurthoroController.text);
+      }).map((doc) {
         return doc.id; // Assuming you want to return the document ID
       }).toList();
     });
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double appBarHeight = screenHeight * 0.08;
+    double responiveFontSize = screenWidth * 0.02;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<List<String>>(
-                stream:
-                    scenariosStream(), // Stream fetching scenarios from Firestore
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No scenarios available.'));
-                  }
-
-                  // Scenarios list from Firestore
-                  List<String> scenarios = snapshot.data!;
-
-                  return ListView.builder(
-                    itemCount: scenarios.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _selecteScenario(scenarios[index]);
-                          },
-                          color: _selectedScenario == scenarios[index]
-                              ? Colors.green
-                              : Colors.blue,
-                          textColor: Colors.white,
-                          child: Text(scenarios[index]),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                _comfirm();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ), // Pass the method as a callback
-              child: const Text('Confirm'),
-            ),
-          ],
+        automaticallyImplyLeading: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          widget.title,
+          style: TextStyle(
+              fontSize: titleFontSize,
+              color: Theme.of(context).colorScheme.surface),
         ),
+        toolbarHeight: appBarHeight,
+      ),
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(70),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: Form(
+                          key: _formKey,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: TextFormField(
+                                  controller: _scenarioController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'Enter your scenario Name'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a namew';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Flexible(
+                                child: TextFormField(
+                                  controller: _aurthoroController,
+                                  decoration: const InputDecoration(
+                                      labelText:
+                                          "Enter your scenario's author's Name"),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a namew';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      Expanded(
+                        child: StreamBuilder<List<String>>(
+                          stream:
+                              scenariosStream(), // Stream fetching scenarios from Firestore
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(
+                                  child: Text('No scenarios available.'));
+                            }
+
+                            // Scenarios list from Firestore
+                            List<String> scenarios = snapshot.data!;
+
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: scenarios.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                      _selecteScenario(scenarios[index]);
+                                    },
+                                    color: _selectedScenario == scenarios[index]
+                                        ? Colors.green
+                                        : Colors.blue,
+                                    textColor: Colors.white,
+                                    child: Text(scenarios[index]),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 30,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: MaterialButton(
+                      onPressed: () {
+                        _comfirm();
+                      },
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Theme.of(context).colorScheme.primary,
+                      minWidth: screenWidth * 0.25,
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.surface,
+                            fontSize: screenWidth * 0.015),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

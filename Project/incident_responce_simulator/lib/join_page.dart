@@ -14,7 +14,7 @@ class _JoinPageState extends State<JoinPage> {
   final _formKey = GlobalKey<FormState>();
   String _roomCode = '';
   String _password = '';
-
+  bool isCollapsed = true;
   final TextEditingController _controller = TextEditingController();
 
   Stream<List<Room>> getRoomsStream() {
@@ -89,93 +89,136 @@ class _JoinPageState extends State<JoinPage> {
         title: const Text('Join a Voting Session'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: StreamBuilder<List<Room>>(
-                stream: getRoomsStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No rooms available.'));
-                  }
-
-                  List<Room> rooms = snapshot.data!;
-
-                  return ListView.builder(
-                    itemCount: rooms.length,
-                    itemBuilder: (context, index) {
-                      Room room = rooms[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _selectRoom(room);
-                          },
-                          color: _roomCode == room ? Colors.green : Colors.blue,
-                          textColor: Colors.white,
-                          child: Text(room.getID()),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 16.0), // Fixed the width since it's in a Row.
-            Expanded(
-              flex: 2,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: _controller,
-                      decoration: const InputDecoration(
-                          labelText: 'Enter your Server Name'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a question';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _roomCode = value!;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                          labelText: 'Enter your Server Password'),
-                      onSaved: (value) {
-                        _password = value!;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          _formKey.currentState?.save();
-                          _submit();
-                        }
-                      },
-                      child: const Text('Join Simulation'),
-                    ),
-                  ],
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
                 ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: StreamBuilder<List<Room>>(
+                      stream: getRoomsStream(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('No rooms available.'));
+                        }
+
+                        List<Room> rooms = snapshot.data!;
+
+                        return ListView.builder(
+                          itemCount: rooms.length,
+                          itemBuilder: (context, index) {
+                            Room room = rooms[index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: MaterialButton(
+                                onPressed: () {
+                                  _selectRoom(room);
+                                },
+                                color: _roomCode == room
+                                    ? Colors.green
+                                    : Colors.blue,
+                                textColor: Colors.white,
+                                child: Text(room.getID()),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                      width: 16.0), // Fixed the width since it's in a Row.
+                  Expanded(
+                    flex: 2,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _controller,
+                            decoration: const InputDecoration(
+                                labelText: 'Enter your Server Name'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a question';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _roomCode = value!;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          TextFormField(
+                            decoration: const InputDecoration(
+                                labelText: 'Enter your Server Password'),
+                            onSaved: (value) {
+                              _password = value!;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                _formKey.currentState?.save();
+                                _submit();
+                              }
+                            },
+                            child: const Text('Join Simulation'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

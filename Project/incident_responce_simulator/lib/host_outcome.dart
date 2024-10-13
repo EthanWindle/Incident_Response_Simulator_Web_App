@@ -44,6 +44,7 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
   List _notesList = [];
   String _score = "";
   String _outcome = "";
+  bool isCollapsed = true;
 
   @override
   void initState() {
@@ -71,35 +72,71 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Text(_outcome),
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Text(_score),
-            ),
-            Expanded(
-              child: _notesList.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: _notesList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            _notesList[index],
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Text(_outcome),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(_score),
+                  ),
+                  Expanded(
+                    child: _notesList.isEmpty
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            itemCount: _notesList.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  _notesList[index],
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

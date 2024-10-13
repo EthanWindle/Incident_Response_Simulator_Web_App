@@ -43,6 +43,7 @@ class _OutcomePageState extends State<Outcome_Page> {
   List _notesList = [];
   String _score = "";
   String _outcome = "";
+  bool isCollapsed = true;
 
   @override
   void initState() {
@@ -70,35 +71,206 @@ class _OutcomePageState extends State<Outcome_Page> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Text(_outcome),
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    "EXPLAIN THE PAGE",
+                    style: TextStyle(color: Color.fromARGB(255, 240, 240, 240)),
+                  )
+                ],
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Text(_score),
-            ),
-            Expanded(
-              child: _notesList.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: _notesList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Text(
-                            _notesList[index],
-                          ),
-                        );
-                      },
+          ),
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Flexible(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        textAlign: TextAlign.left,
+                        'Final Outcome',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 33, 33, 33),
+                          fontSize: 30,
+                        ),
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _outcome,
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 33, 33, 33),
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Flexible(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        textAlign: TextAlign.left,
+                        'Score Received',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 33, 33, 33),
+                          fontSize: 30,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _score,
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 33, 33, 33),
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Flexible(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Text(
+                        textAlign: TextAlign.left,
+                        'Notes and Feedback',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 33, 33, 33),
+                          fontSize: 30,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        border: Border.all(
+                          color: Colors.blue,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: _notesList.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : ListView.builder(
+                                itemCount: _notesList.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[50],
+                                        border: Border.all(
+                                          color: Colors.blue,
+                                          width: 2,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          _notesList[index],
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
