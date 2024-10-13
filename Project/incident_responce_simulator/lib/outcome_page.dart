@@ -130,8 +130,7 @@ class _OutcomePageState extends State<Outcome_Page> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  Expanded(
-                    flex: 1,
+                  Flexible(
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -175,8 +174,7 @@ class _OutcomePageState extends State<Outcome_Page> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  Expanded(
-                    flex: 1,
+                  Flexible(
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -232,6 +230,7 @@ class _OutcomePageState extends State<Outcome_Page> {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
+                      height: 150,
                       child: Center(
                         child: _notesList.isEmpty
                             ? const Center(child: CircularProgressIndicator())

@@ -104,37 +104,188 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
             ),
           ),
           Flexible(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(_outcome),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(_score),
-                  ),
-                  Expanded(
-                    child: _notesList.isEmpty
-                        ? const Center(child: CircularProgressIndicator())
-                        : ListView.builder(
-                            itemCount: _notesList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  _notesList[index],
-                                ),
-                              );
-                            },
+            child: Stack(children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
                           ),
-                  ),
-                ],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          textAlign: TextAlign.left,
+                          'Final Outcome',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 33, 33, 33),
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          _outcome,
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 33, 33, 33),
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Flexible(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          textAlign: TextAlign.left,
+                          'Score Received',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 33, 33, 33),
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          _score,
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 33, 33, 33),
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Flexible(
+                      child: Container(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          textAlign: TextAlign.left,
+                          'Notes and Feedback',
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 33, 33, 33),
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        height: 150,
+                        child: Center(
+                          child: _notesList.isEmpty
+                              ? const Center(child: CircularProgressIndicator())
+                              : ListView.builder(
+                                  itemCount: _notesList.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue[50],
+                                          border: Border.all(
+                                            color: Colors.blue,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            _notesList[index],
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: MaterialButton(
+                  onPressed: () => {},
+                  color: Theme.of(context).colorScheme.primary,
+                  child: const Text(
+                    "Close Room",
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
           ),
         ],
       ),
