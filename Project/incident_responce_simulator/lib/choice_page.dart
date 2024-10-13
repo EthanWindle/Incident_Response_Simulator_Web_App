@@ -158,44 +158,97 @@ class _ChoicePageState extends State<Choice_Page> {
                     flex: 2,
                     child: _situation.isEmpty
                         ? const Center(child: CircularProgressIndicator())
-                        : Text(_situation),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: options.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: MaterialButton(
-                            onPressed: () {
-                              _selecteOption(
-                                  "Option${index + 1}", optionContinues[index]);
-                            },
-                            color: _selectedOption == "Option${index + 1}"
-                                ? Colors.green
-                                : Colors.blue,
-                            textColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(options[index]),
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Container(
+                                  child: const Text(
+                                    "The Current Situation",
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Container(
+                                  child: Text(
+                                    _situation,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _comfirm();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ), // Pass the method as a callback
-                    child: const Text('Confirm'),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            child: const Text(
+                              "Options:",
+                              style: TextStyle(
+                                fontSize: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: options.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: MaterialButton(
+                                  onPressed: () {
+                                    _selecteOption("Option${index + 1}",
+                                        optionContinues[index]);
+                                  },
+                                  color: _selectedOption == "Option${index + 1}"
+                                      ? Colors.green
+                                      : Colors.blue,
+                                  textColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(options[index]),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _comfirm();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ), // Pass the method as a callback
+                            child: const Text('Confirm'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

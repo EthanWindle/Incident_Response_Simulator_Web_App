@@ -245,18 +245,52 @@ class _HostViewPageState extends State<HostView_Page> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(40.0),
+                  padding: const EdgeInsets.all(50.0),
                   child: Row(
                     children: [
                       Expanded(
                         flex: 2,
                         child: _situation.isEmpty
                             ? const Center(child: CircularProgressIndicator())
-                            : Text(_situation),
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: const Text(
+                                      "The Current Situation",
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      _situation,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
                       ),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Container(
+                              child: const Text(
+                                "Options:",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
                             Expanded(
                               child: StreamBuilder<List<String>>(
                                 stream: optionsStream(), // Stream for options
@@ -378,24 +412,26 @@ class _HostViewPageState extends State<HostView_Page> {
                                 },
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  widget.room.getShowVote()
-                                      ? _comfirm()
-                                      : DisplayVotes();
-                                });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ), // Pass the method as a callback
-                              child: Text(widget.room.getShowVote()
-                                  ? 'Confirm'
-                                  : 'Show Votes'),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    widget.room.getShowVote()
+                                        ? _comfirm()
+                                        : DisplayVotes();
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ), // Pass the method as a callback
+                                child: Text(widget.room.getShowVote()
+                                    ? 'Confirm'
+                                    : 'Show Votes'),
+                              ),
                             ),
                           ],
                         ),

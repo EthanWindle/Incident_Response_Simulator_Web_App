@@ -217,30 +217,69 @@ class _ClientViewPageState extends State<ClientView_Page> {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(50.0),
                   child: Row(
                     children: [
                       Expanded(
-                          flex: 2,
-                          // display situation
-                          child: StreamBuilder<String>(
-                              stream: _situationStream(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.hasData &&
-                                    snapshot.data!.isNotEmpty) {
-                                  return Text(snapshot.data!);
-                                }
-                                return const Text("Situation failed to load.");
-                              })),
+                        flex: 2,
+                        // display situation
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                child: const Text(
+                                  "The Current Situation",
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: StreamBuilder<String>(
+                                stream: _situationStream(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    return Text(
+                                      snapshot.data!,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    );
+                                  }
+                                  return const Text(
+                                      "Situation failed to load.");
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
                       Expanded(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Container(
+                              child: const Text(
+                                "Options:",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
                             Expanded(
                               child: StreamBuilder<List<String>>(
                                 stream: optionsStream(), // Stream for options
@@ -269,6 +308,7 @@ class _ClientViewPageState extends State<ClientView_Page> {
                                             },
                                             padding: const EdgeInsets.all(16),
                                             child: Container(
+                                              padding: const EdgeInsets.all(16),
                                               decoration: BoxDecoration(
                                                 color: newVote == index
                                                     ? Colors.green[50]
@@ -377,19 +417,21 @@ class _ClientViewPageState extends State<ClientView_Page> {
                                 },
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                updateVote();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ), // Pass the method as a callback
-                              child: Text(
-                                  currentVote == -1 ? 'Vote' : "Update Vote"),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  updateVote();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ), // Pass the method as a callback
+                                child: Text(
+                                    currentVote == -1 ? 'Vote' : "Update Vote"),
+                              ),
                             ),
                           ],
                         ),
