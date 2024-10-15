@@ -168,7 +168,7 @@ class _ChoicePageState extends State<Choice_Page> {
                   icon: Icon(isCollapsed
                       ? Icons.arrow_forward_ios
                       : Icons.arrow_back_ios),
-                  color: const Color.fromARGB(255, 65, 64, 64),
+                  color: const Color.fromARGB(255, 235, 254, 245),
                   onPressed: () {
                     setState(() {
                       isCollapsed = !isCollapsed;

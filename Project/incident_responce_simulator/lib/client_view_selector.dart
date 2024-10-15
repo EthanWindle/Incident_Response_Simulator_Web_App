@@ -206,8 +206,9 @@ class _ClientViewPageState extends State<ClientView_Page> {
           icon: Icon(
             Icons.home,
             size: titleFontSize * 0.75,
-            color: Theme.of(context).colorScheme.surface,
+            color: const Color.fromARGB(255, 3, 10, 0),
           ),
+          color: const Color.fromARGB(255, 3, 10, 0),
         ),
         backgroundColor: const Color.fromARGB(255, 252, 245, 255),
         title: Text(widget.title,

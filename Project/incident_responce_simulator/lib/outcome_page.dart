@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'main.dart';
 
 class OutcomePage extends StatelessWidget {
   final String path;
@@ -84,6 +85,20 @@ class _OutcomePageState extends State<Outcome_Page> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          },
+          icon: Icon(
+            Icons.home,
+            size: titleFontSize * 0.75,
+            color: const Color.fromARGB(255, 3, 10, 0),
+          ),
+          color: const Color.fromARGB(255, 3, 10, 0),
+        ),
         backgroundColor: const Color.fromARGB(255, 252, 245, 255),
         title: Text(widget.title,
             style: TextStyle(
@@ -140,14 +155,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: const Text(
                         textAlign: TextAlign.left,
                         'Final Outcome',
@@ -162,14 +169,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                   Flexible(
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: Text(
                         _outcome,
                         style: TextStyle(
@@ -184,14 +183,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: const Text(
                         textAlign: TextAlign.left,
                         'Score Received',
@@ -206,17 +197,9 @@ class _OutcomePageState extends State<Outcome_Page> {
                   Flexible(
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: Text(
                         _score,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color.fromARGB(255, 33, 33, 33),
                           fontSize: 20,
                         ),
@@ -228,14 +211,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                     child: Container(
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       child: const Text(
                         textAlign: TextAlign.left,
                         'Notes and Feedback',
@@ -251,14 +226,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                     flex: 3,
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[50],
-                        border: Border.all(
-                          color: Colors.blue,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
                       height: 150,
                       child: Center(
                         child: _notesList.isEmpty
@@ -271,14 +238,6 @@ class _OutcomePageState extends State<Outcome_Page> {
                                         vertical: 8.0),
                                     child: Container(
                                       padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[50],
-                                        border: Border.all(
-                                          color: Colors.blue,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
                                       child: Center(
                                         child: Text(
                                           _notesList[index],
