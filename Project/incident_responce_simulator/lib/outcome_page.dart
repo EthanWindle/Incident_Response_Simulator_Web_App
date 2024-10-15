@@ -12,7 +12,14 @@ class OutcomePage extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -22,7 +29,7 @@ class OutcomePage extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Outcome_Page(
-        title: 'Incident Response selector Page',
+        title: 'Incident Response Outcome Page',
         path: path,
       ),
     );
@@ -67,9 +74,23 @@ class _OutcomePageState extends State<Outcome_Page> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
       body: Row(
         children: [

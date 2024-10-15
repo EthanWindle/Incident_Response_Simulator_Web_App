@@ -82,17 +82,20 @@ class _MyHomePageState extends State<MyHomePage> {
     // Sizing Variables
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    double appBarHeight = screenHeight * 0.08;
-    double fontSize = screenWidth * 0.02;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 252, 245, 255),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
         title: Text(widget.title,
             style: TextStyle(
-                fontSize: fontSize, color: Color.fromARGB(255, 2, 2, 2))),
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
         toolbarHeight: appBarHeight,
-        shadowColor: Color.fromARGB(245, 242, 235, 245),
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
       body: Row(
         children: [
@@ -137,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
           const SizedBox(height: 16.0),
           Flexible(
             child: Container(
-              color: Color.fromARGB(255, 59, 74, 138),
+              color: const Color.fromARGB(255, 255, 255, 255),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

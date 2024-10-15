@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
+import 'main.dart';
 
 class HostOutcomePage extends StatelessWidget {
   final Room room;
@@ -13,7 +14,14 @@ class HostOutcomePage extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -23,7 +31,7 @@ class HostOutcomePage extends StatelessWidget {
         useMaterial3: true,
       ),
       home: HostOutcome_Page(
-        title: 'Incident Response selector Page',
+        title: 'Incident Response Outcome Page',
         room: room,
       ),
     );
@@ -68,9 +76,37 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          },
+          icon: Icon(
+            Icons.home,
+            size: titleFontSize * 0.75,
+            color: const Color.fromARGB(255, 25, 23, 51),
+          ),
+          color: const Color.fromARGB(255, 25, 23, 51),
+        ),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
       body: Row(
         children: [
@@ -120,16 +156,8 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                   children: [
                     Flexible(
                       child: Container(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         child: const Text(
                           textAlign: TextAlign.left,
                           'Final Outcome',
@@ -144,14 +172,6 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         child: Text(
                           _outcome,
                           style: TextStyle(
@@ -164,16 +184,8 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                     const SizedBox(height: 16.0),
                     Flexible(
                       child: Container(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         child: const Text(
                           textAlign: TextAlign.left,
                           'Score Received',
@@ -188,14 +200,6 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         child: Text(
                           _score,
                           style: TextStyle(
@@ -208,16 +212,8 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                     const SizedBox(height: 16.0),
                     Flexible(
                       child: Container(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.center,
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         child: const Text(
                           textAlign: TextAlign.left,
                           'Notes and Feedback',
@@ -233,14 +229,6 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                       flex: 3,
                       child: Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
                         height: 150,
                         child: Center(
                           child: _notesList.isEmpty
@@ -253,15 +241,6 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                                           vertical: 8.0),
                                       child: Container(
                                         padding: const EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue[50],
-                                          border: Border.all(
-                                            color: Colors.blue,
-                                            width: 2,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
                                         child: Center(
                                           child: Text(
                                             _notesList[index],
@@ -285,11 +264,17 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                 right: 20,
                 child: MaterialButton(
                   onPressed: () => {},
-                  color: Theme.of(context).colorScheme.primary,
-                  child: const Text(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  color: Theme.of(context).colorScheme.secondary,
+                  minWidth: screenWidth * 0.25,
+                  child: Text(
                     "Close Room",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.surface,
+                      fontSize: screenWidth * 0.015,
                     ),
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'client_outcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
+import 'main.dart';
 
 class ClientViewPage extends StatelessWidget {
   final Room room;
@@ -14,7 +15,14 @@ class ClientViewPage extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -178,9 +186,36 @@ class _ClientViewPageState extends State<ClientView_Page> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          },
+          icon: Icon(
+            Icons.home,
+            size: titleFontSize * 0.75,
+            color: Theme.of(context).colorScheme.surface,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
       body: Row(
         children: [
@@ -239,14 +274,12 @@ class _ClientViewPageState extends State<ClientView_Page> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Container(
-                                child: const Text(
-                                  "The Current Situation",
-                                  style: const TextStyle(
-                                    fontSize: 30,
-                                  ),
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text(
+                                "The Current Situation",
+                                style: TextStyle(
+                                  fontSize: 30,
                                 ),
                               ),
                             ),
@@ -324,11 +357,15 @@ class _ClientViewPageState extends State<ClientView_Page> {
                                               decoration: BoxDecoration(
                                                 color: newVote == index
                                                     ? Colors.green[50]
-                                                    : Colors.blue[50],
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .tertiary,
                                                 border: Border.all(
                                                   color: currentVote == index
                                                       ? Colors.green
-                                                      : Colors.blue,
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary,
                                                   width: 2,
                                                 ),
                                                 borderRadius:
@@ -340,11 +377,16 @@ class _ClientViewPageState extends State<ClientView_Page> {
                                                 children: [
                                                   Text(
                                                     options[index],
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors
-                                                          .blue, // Text color
-                                                    ),
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: newVote == index
+                                                            ? Color.fromARGB(
+                                                                255, 24, 36, 32)
+                                                            : Color.fromARGB(
+                                                                255,
+                                                                231,
+                                                                219,
+                                                                223)),
                                                     textAlign: TextAlign
                                                         .center, // Align text to the center
                                                   ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'host_outcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
+import 'main.dart';
 
 class HostViewPage extends StatelessWidget {
   final Room room;
@@ -14,7 +15,14 @@ class HostViewPage extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -24,7 +32,7 @@ class HostViewPage extends StatelessWidget {
         useMaterial3: true,
       ),
       home: HostView_Page(
-        title: 'Incident Response selector Page',
+        title: 'Incident Response Hosts Choice Page',
         room: room,
       ),
     );
@@ -206,17 +214,42 @@ class _HostViewPageState extends State<HostView_Page> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyApp()),
+              );
+            },
+            icon: Icon(
+              Icons.home,
+              color: Color.fromARGB(255, 3, 10, 0),
+              size: titleFontSize * 0.75,
+            ),
+            color: Color.fromARGB(255, 3, 10, 0)),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
       body: Row(
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            width: isCollapsed
-                ? 70
-                : 250, // Width changes based on collapsed state
+            width: isCollapsed ? 70 : 250,
             color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
             child: Column(
               children: [
@@ -267,11 +300,11 @@ class _HostViewPageState extends State<HostView_Page> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: const Text(
+                                  const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Text(
                                       "The Current Situation",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 30,
                                       ),
                                     ),
@@ -325,9 +358,13 @@ class _HostViewPageState extends State<HostView_Page> {
                                           child: Container(
                                             padding: const EdgeInsets.all(16),
                                             decoration: BoxDecoration(
-                                              color: Colors.blue[50],
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary,
                                               border: Border.all(
-                                                color: Colors.blue,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary,
                                                 width: 2,
                                               ),
                                               borderRadius:
@@ -339,13 +376,12 @@ class _HostViewPageState extends State<HostView_Page> {
                                               children: [
                                                 Text(
                                                   options[index],
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors
-                                                        .blue, // Text color
-                                                  ),
-                                                  textAlign: TextAlign
-                                                      .center, // Align text to the center
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .surface,
+                                                      fontSize: 18),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                                 const SizedBox(height: 10.0),
                                                 StreamBuilder<double>(
@@ -424,7 +460,7 @@ class _HostViewPageState extends State<HostView_Page> {
                               ),
                             ),
                             Center(
-                              child: ElevatedButton(
+                              child: MaterialButton(
                                 onPressed: () {
                                   setState(() {
                                     widget.room.getShowVote()
@@ -432,16 +468,22 @@ class _HostViewPageState extends State<HostView_Page> {
                                         : DisplayVotes();
                                   });
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                ), // Pass the method as a callback
-                                child: Text(widget.room.getShowVote()
-                                    ? 'Continue'
-                                    : 'Show Votes'),
+                                color: Theme.of(context).colorScheme.secondary,
+                                minWidth: screenWidth * 0.25,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  widget.room.getShowVote()
+                                      ? 'Continue'
+                                      : 'Show Votes',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      fontSize: screenWidth * 0.015),
+                                ),
                               ),
                             ),
                           ],
@@ -457,10 +499,17 @@ class _HostViewPageState extends State<HostView_Page> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: Colors.blueAccent,
+                      color: Theme.of(context).colorScheme.secondary,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.2),
                           blurRadius: 6,
                           offset: const Offset(2, 2),
                         ),
@@ -476,9 +525,20 @@ class _HostViewPageState extends State<HostView_Page> {
                           return Text('Error: ${totalVoteSnapshot.error}');
                         } else if (totalVoteSnapshot.hasData) {
                           double totalVotes = totalVoteSnapshot.data!;
-                          return Text(totalVotes.toString());
+                          return Text(
+                            totalVotes.toString(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                              fontSize: screenWidth * 0.01,
+                            ),
+                          );
                         }
-                        return const Text("Cant see votes.");
+                        return Text(
+                          "Cant see votes.",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                              fontSize: screenWidth * 0.015),
+                        );
                       },
                     ),
                   ),

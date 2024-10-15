@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'choice_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-void main() {
-  runApp(const ScenarioSelector());
-}
+import 'main.dart';
 
 class ScenarioSelector extends StatelessWidget {
   const ScenarioSelector({super.key});
@@ -16,7 +13,14 @@ class ScenarioSelector extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -91,21 +95,34 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     // Sizing Variables
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    double appBarHeight = screenHeight * 0.08;
-    double responiveFontSize = screenWidth * 0.02;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
     double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          widget.title,
-          style: TextStyle(
-              fontSize: titleFontSize,
-              color: Theme.of(context).colorScheme.surface),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            size: titleFontSize * 0.75,
+            color: const Color.fromARGB(255, 25, 23, 51),
+          ),
+          color: const Color.fromARGB(255, 25, 23, 51),
         ),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
         toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(255, 2, 2, 2),
       ),
       body: Row(
         children: [
@@ -202,8 +219,7 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                       const SizedBox(height: 20.0),
                       Expanded(
                         child: StreamBuilder<List<String>>(
-                          stream:
-                              scenariosStream(), // Stream fetching scenarios from Firestore
+                          stream: scenariosStream(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -234,11 +250,18 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                                     onPressed: () {
                                       _selecteScenario(scenarios[index]);
                                     },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    height: screenHeight * 0.05,
                                     color: _selectedScenario == scenarios[index]
                                         ? Colors.green
-                                        : Colors.blue,
-                                    textColor: Colors.white,
-                                    child: Text(scenarios[index]),
+                                        : Theme.of(context).colorScheme.primary,
+                                    child: Text(
+                                      scenarios[index],
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
                                   ),
                                 );
                               },
@@ -264,13 +287,14 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                       minWidth: screenWidth * 0.25,
                       child: Text(
                         'Confirm',
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface,
-                            fontSize: screenWidth * 0.015),
+                          color: Theme.of(context).colorScheme.surface,
+                          fontSize: screenWidth * 0.015,
+                        ),
                       ),
                     ),
                   ),
