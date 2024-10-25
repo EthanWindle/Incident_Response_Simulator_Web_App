@@ -119,6 +119,20 @@ class _ChoicePageState extends State<Choice_Page> {
     });
   }
 
+  Stream<List<String>> optionsStream() {
+    CollectionReference scenariosCollection =
+        FirebaseFirestore.instance.collection(widget.path);
+
+    return scenariosCollection.snapshots().map((snapshot) {
+      return snapshot.docs.where((doc) => doc.id != "Situation").map((doc) {
+        final data = doc.data() as Map<String, dynamic>?;
+        return data != null && data.containsKey('Option')
+            ? data['Option'] as String
+            : "";
+      }).toList();
+    });
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -250,51 +264,70 @@ class _ChoicePageState extends State<Choice_Page> {
                           ),
                         ),
                         Expanded(
-                          child: ListView.builder(
-                            itemCount: options.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    _selecteOption("Option${index + 1}",
-                                        optionContinues[index]);
+                          child: StreamBuilder<List<String>>(
+                            stream: optionsStream(), // Stream for options
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else if (snapshot.hasData &&
+                                  snapshot.data!.isNotEmpty) {
+                                List<String> options = snapshot.data!;
+
+                                return ListView.builder(
+                                  itemCount: options.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: MaterialButton(
+                                        onPressed: () {
+                                          _selecteOption("Option${index + 1}",
+                                              optionContinues[index]);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(16.0),
+                                          decoration: BoxDecoration(
+                                            color: _selectedOption ==
+                                                    "Option${index + 1}"
+                                                ? Colors.green[50]
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .tertiary,
+                                            border: Border.all(
+                                              color: _selectedOption ==
+                                                      "Option${index + 1}"
+                                                  ? Colors.green
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                              width: 2,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Text(
+                                            options[index],
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              color: _selectedOption ==
+                                                      "Option${index + 1}"
+                                                  ? const Color.fromARGB(
+                                                      255, 17, 10, 27)
+                                                  : const Color.fromARGB(
+                                                      255, 238, 245, 228),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16.0),
-                                    decoration: BoxDecoration(
-                                      color: _selectedOption ==
-                                              "Option${index + 1}"
-                                          ? Colors.green[50]
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .tertiary,
-                                      border: Border.all(
-                                        color: _selectedOption ==
-                                                "Option${index + 1}"
-                                            ? Colors.green
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      options[index],
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: _selectedOption ==
-                                                "Option${index + 1}"
-                                            ? const Color.fromARGB(
-                                                255, 17, 10, 27)
-                                            : const Color.fromARGB(
-                                                255, 238, 245, 228),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
+                                );
+                              } else {
+                                return const Text('No data');
+                              }
                             },
                           ),
                         ),

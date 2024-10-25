@@ -56,8 +56,6 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/Scenarios/
-    - assets/ScenariorsList.json
 
 
   # The following line ensures that the Material Icons font is

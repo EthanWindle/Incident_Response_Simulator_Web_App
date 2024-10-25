@@ -73,6 +73,15 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
     });
   }
 
+  void deleteRoom() {
+    CollectionReference rooms = FirebaseFirestore.instance.collection("Rooms");
+    rooms.doc(widget.room.getID()).delete();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MyApp()),
+    );
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -263,7 +272,9 @@ class _HostOutcomePageState extends State<HostOutcome_Page> {
                 bottom: 20,
                 right: 20,
                 child: MaterialButton(
-                  onPressed: () => {},
+                  onPressed: () {
+                    deleteRoom();
+                  },
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),

@@ -153,10 +153,10 @@ class _OutcomePageState extends State<Outcome_Page> {
                 children: [
                   Flexible(
                     child: Container(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       padding: const EdgeInsets.all(16),
                       child: const Text(
-                        textAlign: TextAlign.left,
+                        textAlign: TextAlign.center,
                         'Final Outcome',
                         style: TextStyle(
                           color: Color.fromARGB(255, 33, 33, 33),
@@ -171,7 +171,7 @@ class _OutcomePageState extends State<Outcome_Page> {
                       padding: const EdgeInsets.all(16),
                       child: Text(
                         _outcome,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color.fromARGB(255, 33, 33, 33),
                           fontSize: 20,
                         ),
@@ -181,10 +181,10 @@ class _OutcomePageState extends State<Outcome_Page> {
                   const SizedBox(height: 16.0),
                   Flexible(
                     child: Container(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       padding: const EdgeInsets.all(16),
                       child: const Text(
-                        textAlign: TextAlign.left,
+                        textAlign: TextAlign.center,
                         'Score Received',
                         style: TextStyle(
                           color: Color.fromARGB(255, 33, 33, 33),
@@ -209,10 +209,10 @@ class _OutcomePageState extends State<Outcome_Page> {
                   const SizedBox(height: 16.0),
                   Flexible(
                     child: Container(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       padding: const EdgeInsets.all(16),
                       child: const Text(
-                        textAlign: TextAlign.left,
+                        textAlign: TextAlign.center,
                         'Notes and Feedback',
                         style: TextStyle(
                           color: Color.fromARGB(255, 33, 33, 33),

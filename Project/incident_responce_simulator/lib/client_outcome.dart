@@ -266,7 +266,12 @@ class _ClientOutcomePageState extends State<ClientOutcome_Page> {
                   bottom: 20,
                   right: 20,
                   child: MaterialButton(
-                    onPressed: () => {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyApp()),
+                      );
+                    },
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
