@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'host_outcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Room.dart';
+import 'main.dart';
 
 class HostViewPage extends StatelessWidget {
   final Room room;
@@ -14,7 +15,14 @@ class HostViewPage extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -24,7 +32,7 @@ class HostViewPage extends StatelessWidget {
         useMaterial3: true,
       ),
       home: HostView_Page(
-        title: 'Incident Response selector Page',
+        title: 'Incident Response Hosts Choice Page',
         room: room,
       ),
     );
@@ -46,6 +54,7 @@ class _HostViewPageState extends State<HostView_Page> {
   List optionContinues = [];
   bool _isEndChoice = false;
   String _situation = "";
+  bool isCollapsed = true;
 
   @override
   void initState() {
@@ -205,193 +214,336 @@ class _HostViewPageState extends State<HostView_Page> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MyApp()),
+              );
+            },
+            icon: Icon(
+              Icons.home,
+              color: Color.fromARGB(255, 3, 10, 0),
+              size: titleFontSize * 0.75,
+            ),
+            color: Color.fromARGB(255, 3, 10, 0)),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(245, 232, 225, 235),
       ),
-      body: Stack(
+      body: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed ? 70 : 250,
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
               children: [
-                Expanded(
-                  flex: 2,
-                  child: _situation.isEmpty
-                      ? const Center(child: CircularProgressIndicator())
-                      : Text(_situation),
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
                 ),
-                Expanded(
-                  child: Column(
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Host's View of the Choice Page'.\n\n"
+                      "On the left is the current situation you are facing."
+                      "On the right is a list the possible choices the participants can vote for. \n\n"
+                      "In the top right corner a number is display to indicate how many votes have come through so far. \n\n"
+                      "A 'Show Votes button below the list of options can be clicked to close the viting and display what percentage of votes each option got as a bar underneth each one.\n\n"
+                      "Once you have concluded the voting, the 'Show Votes' button will transform into a 'Continue' button."
+                      "Click this button to move the entire simulation onto the next stage. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(50.0),
+                  child: Row(
                     children: [
                       Expanded(
-                        child: StreamBuilder<List<String>>(
-                          stream: optionsStream(), // Stream for options
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.hasData &&
-                                snapshot.data!.isNotEmpty) {
-                              List<String> options = snapshot.data!;
-
-                              return ListView.builder(
-                                itemCount: options.length,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 16.0),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[50],
-                                        border: Border.all(
-                                          color: Colors.blue,
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10),
+                        flex: 2,
+                        child: _situation.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Text(
+                                      "The Current Situation",
+                                      style: TextStyle(
+                                        fontSize: 30,
                                       ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            options[index],
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.blue, // Text color
-                                            ),
-                                            textAlign: TextAlign
-                                                .center, // Align text to the center
-                                          ),
-                                          const SizedBox(height: 10.0),
-                                          StreamBuilder<double>(
-                                            stream: getVoteCount(index),
-                                            builder: (context, voteSnapshot) {
-                                              if (voteSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const CircularProgressIndicator(); // Show progress while loading
-                                              } else if (voteSnapshot
-                                                  .hasError) {
-                                                return Text(
-                                                    'Error: ${voteSnapshot.error}');
-                                              } else if (voteSnapshot.hasData) {
-                                                double voteCount =
-                                                    voteSnapshot.data!;
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      _situation,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: const Text(
+                                "Options:",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: StreamBuilder<List<String>>(
+                                stream: optionsStream(), // Stream for options
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    List<String> options = snapshot.data!;
 
-                                                return StreamBuilder<double>(
-                                                  stream: getTotalVotes(),
-                                                  builder: (context,
-                                                      totalVoteSnapshot) {
-                                                    if (totalVoteSnapshot
+                                    return ListView.builder(
+                                      itemCount: options.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16.0),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .tertiary,
+                                              border: Border.all(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary,
+                                                width: 2,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  options[index],
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .surface,
+                                                      fontSize: 18),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                const SizedBox(height: 10.0),
+                                                StreamBuilder<double>(
+                                                  stream: getVoteCount(index),
+                                                  builder:
+                                                      (context, voteSnapshot) {
+                                                    if (voteSnapshot
                                                             .connectionState ==
                                                         ConnectionState
                                                             .waiting) {
                                                       return const CircularProgressIndicator(); // Show progress while loading
-                                                    } else if (totalVoteSnapshot
+                                                    } else if (voteSnapshot
                                                         .hasError) {
                                                       return Text(
-                                                          'Error: ${totalVoteSnapshot.error}');
-                                                    } else if (totalVoteSnapshot
+                                                          'Error: ${voteSnapshot.error}');
+                                                    } else if (voteSnapshot
                                                         .hasData) {
-                                                      double totalVotes =
-                                                          totalVoteSnapshot
-                                                              .data!;
-                                                      double progress =
-                                                          totalVotes != 0
-                                                              ? voteCount /
-                                                                  totalVotes
-                                                              : 0.0;
+                                                      double voteCount =
+                                                          voteSnapshot.data!;
 
-                                                      return widget.room
-                                                              .getShowVote()
-                                                          ? LinearProgressIndicator(
-                                                              value: progress,
-                                                            )
-                                                          : const SizedBox
-                                                              .shrink();
+                                                      return StreamBuilder<
+                                                          double>(
+                                                        stream: getTotalVotes(),
+                                                        builder: (context,
+                                                            totalVoteSnapshot) {
+                                                          if (totalVoteSnapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return const CircularProgressIndicator(); // Show progress while loading
+                                                          } else if (totalVoteSnapshot
+                                                              .hasError) {
+                                                            return Text(
+                                                                'Error: ${totalVoteSnapshot.error}');
+                                                          } else if (totalVoteSnapshot
+                                                              .hasData) {
+                                                            double totalVotes =
+                                                                totalVoteSnapshot
+                                                                    .data!;
+                                                            double progress =
+                                                                totalVotes != 0
+                                                                    ? voteCount /
+                                                                        totalVotes
+                                                                    : 0.0;
+
+                                                            return widget.room
+                                                                    .getShowVote()
+                                                                ? LinearProgressIndicator(
+                                                                    value:
+                                                                        progress,
+                                                                  )
+                                                                : const SizedBox
+                                                                    .shrink();
+                                                          } else {
+                                                            return const Text(
+                                                                'No data');
+                                                          }
+                                                        },
+                                                      );
                                                     } else {
                                                       return const Text(
                                                           'No data');
                                                     }
                                                   },
-                                                );
-                                              } else {
-                                                return const Text('No data');
-                                              }
-                                            },
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    return const Text('No options available');
+                                  }
                                 },
-                              );
-                            } else {
-                              return const Text('No options available');
-                            }
-                          },
+                              ),
+                            ),
+                            Center(
+                              child: MaterialButton(
+                                onPressed: () {
+                                  setState(() {
+                                    widget.room.getShowVote()
+                                        ? _comfirm()
+                                        : DisplayVotes();
+                                  });
+                                },
+                                color: Theme.of(context).colorScheme.secondary,
+                                minWidth: screenWidth * 0.25,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  widget.room.getShowVote()
+                                      ? 'Continue'
+                                      : 'Show Votes',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      fontSize: screenWidth * 0.015),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.room.getShowVote()
-                                ? _comfirm()
-                                : DisplayVotes();
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                        ), // Pass the method as a callback
-                        child: Text(widget.room.getShowVote()
-                            ? 'Confirm'
-                            : 'Show Votes'),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.blueAccent,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 6,
-                    offset: const Offset(2, 2),
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Theme.of(context).colorScheme.secondary,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.2),
+                          blurRadius: 6,
+                          offset: const Offset(2, 2),
+                        ),
+                      ],
+                    ),
+                    child: StreamBuilder<double>(
+                      stream: getTotalVotes(),
+                      builder: (context, totalVoteSnapshot) {
+                        if (totalVoteSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator(); // Show progress while loading
+                        } else if (totalVoteSnapshot.hasError) {
+                          return Text('Error: ${totalVoteSnapshot.error}');
+                        } else if (totalVoteSnapshot.hasData) {
+                          double totalVotes = totalVoteSnapshot.data!;
+                          return Text(
+                            totalVotes.toString(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                              fontSize: screenWidth * 0.01,
+                            ),
+                          );
+                        }
+                        return Text(
+                          "Cant see votes.",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                              fontSize: screenWidth * 0.015),
+                        );
+                      },
+                    ),
                   ),
-                ],
-              ),
-              child: StreamBuilder<double>(
-                stream: getTotalVotes(),
-                builder: (context, totalVoteSnapshot) {
-                  if (totalVoteSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const CircularProgressIndicator(); // Show progress while loading
-                  } else if (totalVoteSnapshot.hasError) {
-                    return Text('Error: ${totalVoteSnapshot.error}');
-                  } else if (totalVoteSnapshot.hasData) {
-                    double totalVotes = totalVoteSnapshot.data!;
-                    return Text(totalVotes.toString());
-                  }
-                  return const Text("Cant see votes.");
-                },
-              ),
+                ),
+              ],
             ),
           ),
         ],

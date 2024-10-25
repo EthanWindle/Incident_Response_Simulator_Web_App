@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'choice_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-void main() {
-  runApp(const ScenarioSelector());
-}
+import 'main.dart';
 
 class ScenarioSelector extends StatelessWidget {
   const ScenarioSelector({super.key});
@@ -16,7 +13,14 @@ class ScenarioSelector extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 1, 21, 151),
-            primary: const Color.fromARGB(255, 1, 21, 151),
+            primary: const Color.fromARGB(255, 31, 86, 140),
+            secondary: const Color.fromARGB(
+              255,
+              56,
+              111,
+              166,
+            ),
+            tertiary: const Color.fromARGB(255, 93, 152, 194),
             surface: Colors.white),
         textTheme: const TextTheme(
           displayLarge: TextStyle(
@@ -26,7 +30,7 @@ class ScenarioSelector extends StatelessWidget {
         useMaterial3: true,
       ),
       home:
-          const ScenarioSelectorPage(title: 'Incident Response selector Page'),
+          const ScenarioSelectorPage(title: 'Incident Response Selector Page'),
     );
   }
 }
@@ -41,12 +45,19 @@ class ScenarioSelectorPage extends StatefulWidget {
 }
 
 class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
+  // Operating Variables
   List scenarios = [];
   String _selectedScenario = "not selected";
+  final TextEditingController _scenarioController = TextEditingController();
+  final TextEditingController _aurthoroController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isCollapsed = true;
 
   @override
   void initState() {
     super.initState();
+    _scenarioController.addListener(() => setState(() {}));
+    _aurthoroController.addListener(() => setState(() {}));
   }
 
   void _selecteScenario(String str) async {
@@ -68,77 +79,231 @@ class _ScenarioSelectorState extends State<ScenarioSelectorPage> {
     CollectionReference scenariosCollection =
         FirebaseFirestore.instance.collection('Scenarios');
     return scenariosCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
+      return snapshot.docs
+          .where((doc) => doc.id.contains(_scenarioController.text))
+          .where((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return data["Author"].contains(_aurthoroController.text);
+      }).map((doc) {
         return doc.id; // Assuming you want to return the document ID
       }).toList();
     });
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Sizing Variables
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double responsiveBarHeight = screenHeight * 0.1;
+    double appBarHeight = responsiveBarHeight > 20 ? responsiveBarHeight : 20;
+    double responiveFontSize = screenWidth * 0.03;
+    double titleFontSize = responiveFontSize > 20 ? responiveFontSize : 20;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<List<String>>(
-                stream:
-                    scenariosStream(), // Stream fetching scenarios from Firestore
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No scenarios available.'));
-                  }
-
-                  // Scenarios list from Firestore
-                  List<String> scenarios = snapshot.data!;
-
-                  return ListView.builder(
-                    itemCount: scenarios.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: MaterialButton(
-                          onPressed: () {
-                            _selecteScenario(scenarios[index]);
-                          },
-                          color: _selectedScenario == scenarios[index]
-                              ? Colors.green
-                              : Colors.blue,
-                          textColor: Colors.white,
-                          child: Text(scenarios[index]),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                _comfirm();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ), // Pass the method as a callback
-              child: const Text('Confirm'),
-            ),
-          ],
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyApp()),
+            );
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            size: titleFontSize * 0.75,
+            color: const Color.fromARGB(255, 25, 23, 51),
+          ),
+          color: const Color.fromARGB(255, 25, 23, 51),
         ),
+        backgroundColor: const Color.fromARGB(255, 252, 245, 255),
+        title: Text(widget.title,
+            style: TextStyle(
+                fontSize: titleFontSize,
+                color: const Color.fromARGB(255, 2, 2, 2))),
+        toolbarHeight: appBarHeight,
+        shadowColor: const Color.fromARGB(255, 2, 2, 2),
+      ),
+      body: Row(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: isCollapsed
+                ? 70
+                : 250, // Width changes based on collapsed state
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                IconButton(
+                  icon: Icon(isCollapsed
+                      ? Icons.arrow_forward_ios
+                      : Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                ),
+                if (!isCollapsed) ...[
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      "This is the 'Scenario Selection Page'.\n\n"
+                      "In the middle of the screen there is a list of all the avaliable simulated scenarios for you to choose from."
+                      "Each scenario is button you will need to click to select your choice. Your currently selected choice will display green. \n\n"
+                      "If there is a particular scenario you want to choose you can use the form above to filter the list."
+                      "The first field will filter the list to only display scenarios whose name contains the input."
+                      "The second field will do the same but withe scenarios author's name.\n\n"
+                      "Once you have selected ypu chosen scenario please click the 'comfim' to begin the simulation. \n\n",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromARGB(255, 240, 240, 240)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Flexible(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(90),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: Form(
+                          key: _formKey,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("Filters: ",
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                  )),
+                              const SizedBox(width: 16),
+                              Flexible(
+                                child: TextFormField(
+                                  controller: _scenarioController,
+                                  decoration: const InputDecoration(
+                                      labelText: 'By Scenario Name'),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a name';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              Flexible(
+                                child: TextFormField(
+                                  controller: _aurthoroController,
+                                  decoration: const InputDecoration(
+                                      labelText: "By Author's Name"),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter a namew';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      Expanded(
+                        child: StreamBuilder<List<String>>(
+                          stream: scenariosStream(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return const Center(
+                                  child: Text('No scenarios available.'));
+                            }
+
+                            // Scenarios list from Firestore
+                            List<String> scenarios = snapshot.data!;
+
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: scenarios.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                      _selecteScenario(scenarios[index]);
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    height: screenHeight * 0.05,
+                                    color: _selectedScenario == scenarios[index]
+                                        ? Colors.green
+                                        : Theme.of(context).colorScheme.primary,
+                                    child: Text(
+                                      scenarios[index],
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  bottom: 30,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: MaterialButton(
+                      onPressed: () {
+                        _comfirm();
+                      },
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Theme.of(context).colorScheme.secondary,
+                      minWidth: screenWidth * 0.25,
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.surface,
+                          fontSize: screenWidth * 0.015,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
